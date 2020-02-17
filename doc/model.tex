@@ -224,9 +224,8 @@ M_{n-1/2}=K M_{n+1/2}.
 \end{equation}
 This means that, when we are at the closest control volume from the left to the transition point, we have
 \begin{equation}
-\frac{d M_{n-1/2}}{dt}= \frac{D(x_{n+1})M_{n-1/2}/K-(D(x_{n+1})+D(x_{n}))M_{n-1/2} + D(x_{n})M_{n-3/2}}{dx^2},
+\frac{d M_{n-1/2}}{dt}= \frac{D(x_{n})M_{n-1/2}/K-(D(x_{n})+D(x_{n-1}))M_{n-1/2} + D(x_{n-1})M_{n-3/2}}{dx^2},
 \end{equation}
-where $D(x_{n+1})$ indicates the diffusion coefficient on the point $x_1$ of the adjacent compartment.
 An analogous construction may be built when the interface is at point $x_0$.
 \end{enumerate}
 
@@ -236,12 +235,12 @@ If the diffusion coefficient is known for all points defining the devide, we now
 \begin{eqnarray*}
 \frac{d M_{1/2}}{dt}&=& D_1\frac{M_{3/2}-M_{1/2} }{dx^2},\\
 \frac{d M_{i+1/2}}{dt}&=& \frac{D_{i+1}M_{i+3/2}-(D_{i+1}+D_{i})M_{i+1/2} + D_iM_{i-1/2}}{dx^2}, \,\, i=1,...,n-2,\\
-\frac{d M_{n-1/2}}{dt}&=& \frac{D_{n+1}M_{n-1/2}/K-(D_{n+1}+D_{n})M_{n-1/2} + D_{n}M_{n-3/2}}{dx^2}, \\
+\frac{d M_{n-1/2}}{dt}&=& \frac{D_{n}M_{n-1/2}/K-(D_{n}+D_{n-1})M_{n-1/2} + D_{n-1}M_{n-3/2}}{dx^2}, \\
 \end{eqnarray*}
 where $D_i=D(x_i)$. Note that, if $K=1$, the interface condition recovers the no flow condition, isolating this compartment from the adjacent one.
 
 This is tridiagonal linear differential system. Let $\vec{M}$ denote the vector of masses in the compartment, that is,
-$\vec{M}(t)=[M_{1/2}(t), M_{3/2}(t), M_{5/2}(t), ..., M_{n-1/2}(t)$, containing $n$ values. Then the system maybe simply written as
+$\vec{M}(t)=[M_{1/2}(t), M_{3/2}(t), M_{5/2}(t), ..., M_{n-1/2}(t)]$, containing $n$ values. Then the system maybe simply written as
 \begin{equation}
 \frac{d \vec{M}(t)}{dt}=A\vec{M}(t),
 \end{equation}
@@ -250,14 +249,30 @@ where $A$ is an $n\times n$ matrix given by the diffusion coefficients as
 A=
 \frac{1}{dx^2}
 \begin{pmatrix}
--D_1 & D_1 & 0 & 0& \cdots & 0 \\
-D_1 & -(D_1+D_2) & D_2 & 0 & \cdots & 0 \\
-0 & D_2 & -(D_2+D_3) & D_4 & \cdots & 0 \\
+-D_1 & D_1 & 0 & 0& \cdots &  \cdots & 0 \\
+D_1 & -(D_1+D_2) & D_2 & 0 & \cdots & \cdots & 0 \\
+0 & D_2 & -(D_2+D_3) & D_3 & \cdots & \cdots & 0 \\
 \vdots  & \vdots & \vdots & \vdots & \ddots & \vdots  \\
-0 & \cdots & 0 & D_{n-1} & -(D_{n-1}+D_n) & D_n \\
-0 & \cdots & 0 & 0 & D_n & -D_n+(1/K-1)D_{n+1} \\
+0 & \cdots & \cdots& 0 & D_{n-2} & -(D_{n-2}+D_{n-1}) & D_{n-1} \\
+0 & \cdots  & \cdots &0 & 0 & D_{n-1} & -D_{n-1}+(1/K-1)D_{n} \\
 \end{pmatrix}
 \end{equation}
+
+For a compartment with interface on the left ($K_l$) and right ($K_r$) the system would be defined via the following matrix,
+\begin{equation}
+A=
+\frac{1}{dx^2}
+\begin{pmatrix}
+-(D_0+D_1)+K_lD_0 & D_1  & 0& \cdots &  \cdots & 0 \\
+D_1 & -(D_1+D_2) & D_2  & \cdots & \cdots & 0 \\
+0 & D_2 & -(D_2+D_3)  & \cdots & \cdots & 0 \\
+\vdots  & \vdots & \vdots  & \ddots & \vdots  \\
+0 & \cdots & \cdots & D_{n-2} & -(D_{n-2}+D_{n-1}) & D_{n-1} \\
+0 & \cdots  & \cdots  & 0 & D_{n-1} & -(D_{n-1}+D_n)+D_n/K_r \\
+\end{pmatrix}.
+\end{equation}
+
+It is easy to see that by setting $K=1$ recovers the no flux condition. Therefore, in the implementation, the interfaces at the boundary of the device will have a partition constant equal to 1, to ensure no flux condition.
 
 The numerical solution of the time evolution maybe obtained also via finite differences formulas. Given a time span we wish to simulate, say $[0,T]$, we may partition this interval into $K$ time steps, $t_k=k\, dt$, where $dt=T/K$. Let $\vec{M}^k\approx  \vec{M}(t_k)$ be an approximate solution of $\vec{M}(t_k)$ at time $t_k$. An explicit solution of the problem, with first order accuracy with respect to time-step-size ($dt$), is
 \begin{equation}
@@ -267,7 +282,7 @@ which is the well-known explicit Euler scheme. While this scheme is attractive a
 \begin{equation}
 D\frac{dt}{dx^2}<\frac{1}{2},
 \end{equation} 
-where $D$ is the maximum diffusion coefficient in the compartment. For small $dx$, the required $dt$ for the method to work (stably) is usually prohibitive. Therefore, implicit schemes are usually adopted. Here we will a Crank-Nicolson scheme, which is second order accurate with respect to $dt$ and unconditionally stable, may be written as
+where $D$ is the maximum diffusion coefficient in the compartment. For small $dx$, the required $dt$ for the method to work (stably) is usually prohibitive. Therefore, implicit schemes are usually adopted. Here we will a Crank-Nicholson scheme, which is second order accurate with respect to $dt$ and unconditionally stable, may be written as
 \begin{equation}
 \vec{M}^{k+1}=\vec{M}^k+\frac{dt}{2}A\left(\vec{M}^k+\,\vec{M}^{k+1}\right).
 \end{equation}
@@ -278,6 +293,11 @@ In this implicit scheme we cannot obtain the approximation for time $t_{k+1}$ di
 \end{equation}
 where $I$ is the $n\times n$ identity matrix. Since $A$ is tridiagonal, this system is very simple to solve with Gaussian Elimination.
 
+It is convenient to work the theory in terms of mass, due to the conservation properties of the system. However, since the system is linear, assuming concentrations are piece-wise constant and the grid is uniform ($dx$ is the same for each compartment), then one may multiply all equations by $dx$ and obtain the same continuous equation for the concentrations,
+\begin{equation}
+\frac{d \vec{C}(t)}{dt}=A\vec{C}(t),
+\end{equation}
+where $\vec{C}(t)=[C_{1/2}(t), C_{3/2}(t), C_{5/2}(t), ..., C_{n-1/2}(t)]$. Therefore the same numerical method hold the concentrations.
 
 %% The Appendices part is started with the command \appendix;
 %% appendix sections are then done as normal sections
