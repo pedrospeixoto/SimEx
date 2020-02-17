@@ -1,0 +1,318 @@
+%% 
+%% Copyright 2007-2019 Elsevier Ltd
+%% 
+%% This file is part of the 'Elsarticle Bundle'.
+%% ---------------------------------------------
+%% 
+%% It may be distributed under the conditions of the LaTeX Project Public
+%% License, either version 1.2 of this license or (at your option) any
+%% later version.  The latest version of this license is in
+%%    http://www.latex-project.org/lppl.txt
+%% and version 1.2 or later is part of all distributions of LaTeX
+%% version 1999/12/01 or later.
+%% 
+%% The list of all files belonging to the 'Elsarticle Bundle' is
+%% given in the file `manifest.txt'.
+%% 
+%% Template article for Elsevier's document class `elsarticle'
+%% with harvard style bibliographic references
+
+%%\documentclass[preprint,12pt]{elsarticle}
+
+%% Use the option review to obtain double line spacing
+%% \documentclass[preprint,review,12pt]{elsarticle}
+
+%% Use the options 1p,twocolumn; 3p; 3p,twocolumn; 5p; or 5p,twocolumn
+%% for a journal layout:
+\documentclass[final,1p,times]{elsarticle}
+%% \documentclass[final,1p,times,twocolumn]{elsarticle}
+%% \documentclass[final,3p,times]{elsarticle}
+%% \documentclass[final,3p,times,twocolumn]{elsarticle}
+%% \documentclass[final,5p,times]{elsarticle}
+%% \documentclass[final,5p,times,twocolumn]{elsarticle}
+
+%% For including figures, graphicx.sty has been loaded in
+%% elsarticle.cls. If you prefer to use the old commands
+%% please give \usepackage{epsfig}
+
+%% The amssymb package provides various useful mathematical symbols
+\usepackage{amssymb}
+\usepackage{amsmath}
+%% The amsthm package provides extended theorem environments
+%% \usepackage{amsthm}
+
+%% The lineno packages adds line numbers. Start line numbering with
+%% \begin{linenumbers}, end it with \end{linenumbers}. Or switch it on
+%% for the whole article with \linenumbers.
+%% \usepackage{lineno}
+
+\journal{To be defined}
+
+\begin{document}
+
+\begin{frontmatter}
+
+%% Title, authors and addresses
+
+%% use the tnoteref command within \title for footnotes;
+%% use the tnotetext command for theassociated footnote;
+%% use the fnref command within \author or \address for footnotes;
+%% use the fntext command for theassociated footnote;
+%% use the corref command within \author for corresponding author footnotes;
+%% use the cortext command for theassociated footnote;
+%% use the ead command for the email address,
+%% and the form \ead[url] for the home page:
+%% \title{Title\tnoteref{label1}}
+%% \tnotetext[label1]{}
+%% \author{Name\corref{cor1}\fnref{label2}}
+%% \ead{email address}
+%% \ead[url]{home page}
+%% \fntext[label2]{}
+%% \cortext[cor1]{}
+%% \address{Address\fnref{label3}}
+%% \fntext[label3]{}
+
+\title{Mathematical modeling of micro-extraction mechanism
+}
+
+%% use optional labels to link authors explicitly to addresses:
+%% \author[label1,label2]{}
+%% \address[label1]{}
+%% \address[label2]{}
+
+\author{Pedro S. Peixoto}
+
+\address{University of São Paulo}
+
+\begin{abstract}
+%% Text of abstract
+Mathematical modeling of micro-extraction mechanism. Adapted for Gas-Diffusion or Solid-Phase.
+\end{abstract}
+
+%%Graphical abstract
+%\begin{graphicalabstract}
+%\includegraphics{grabs}
+%\end{graphicalabstract}
+
+%%Research highlights
+%\begin{highlights}
+%\item Research highlight 1
+%\item Research highlight 2
+%\end{highlights}
+
+\begin{keyword}
+%% keywords here, in the form: keyword \sep keyword
+
+%% PACS codes here, in the form: \PACS code \sep code
+
+%% MSC codes here, in the form: \MSC code \sep code
+%% or \MSC[2008] code \sep code (2000 is the default)
+
+\end{keyword}
+
+\end{frontmatter}
+
+%% \linenumbers
+
+%% main text
+\section{Mathematical Model and Numerical Method}
+\label{sec:model}
+
+In this section we will describe a slight modification of the diffusion model proposed by \citet{zhang1993headspace} in order to build a numerical model that is adequate for variable discontinuous diffusion processes, such as those encountered in micro-extraction techniques. We first explain in details a general diffusion model, that is actually very well known in the literature (see details \citet{leveque1992numerical}).
+
+We will assume the full device in which the diffusion process will happen has two uniform dimensions, say $y$ and $z$, and one dimension ($x$) for which we have compartments of different sizes. 
+
+The main assumption made about the process is that the dominant/relevant diffusion process occurs only in one direction ($x$), therefore being uniform in the other dimensions ($y$, $z$). As a result, we will obtain a model that is independent of the device size in $y$ and $z$ direction.
+
+\subsection{Compartmental model}
+
+Consider a single compartment of the device to have dimensions $(L_x, L_y, L_z)$. Fick's law assumes that the diffusion flux ($J$), providing the mass per area unit and per time unit, crossing a section area at a certain position in the x-coordinate and time $t$, is given by
+\begin{equation}
+J(x,t)=-D(x) \frac{\partial C(x,t)}{\partial x},
+\end{equation}
+where $C(x,t)$ denotes the concentration of the material (amount of substance per volume) undergoing a diffusion process, at a certain place and time; $D(x)$ denotes the diffusion coefficient (cross section area per time units), which depends on the environment that contains the substance, therefore may be different in different $x$ positions.
+
+We will subdivide the compartment into a set of discrete points. If we define the compartment to be positioned in the interval $[0, L_x]$, we can subdivide it into $N$ sub-intervals of size $dx$, such that $x_i=i\,dx$, $i=0, 1, ..., n$ with $dx=L_x/n$. The mass $M_{i+1/2}$ on a sub-interval $[x_i, x_{i+1}]$ of the domain depends only on the lateral fluxes, therefore,
+\begin{equation}
+\frac{d M_{i+1/2}(t)}{dt}= L_y\, L_z (J(x_{i}, t)-J(x_{i+1})),
+\label{eq:localmassconserv}
+\end{equation}
+where
+\begin{equation}
+M_{i+1/2}(t)=L_y\, L_z\,\int_{x_i}^{x_{i+1}}C(x,t) \,dx,
+\end{equation}
+and we have used the notation of $i+1/2$ so that it is clear that this mass is defined between $i$ and $i+1$ positions. Also note that the flux in the position $x_i$ has positive sign, as it is indicating inward flow into the compartment, and the flux in the position $x_{i+1}$ has negative sign, since the flow at this point indicates outward flow.
+
+
+Equation \ref{eq:localmassconserv} may be re-written, assuming sufficient regularity of the functions, as
+\begin{equation}
+\int_{x_i}^{x_{i+1}} \frac{\partial C(x,t) }{\partial t}  \,dx =  -\int_{x_i}^{x_{i+1}}\frac{\partial J(x,t)}{\partial x} 
+\end{equation}
+where we note that the problem is therefore independent of $L_y$ and $L_z$. Also,  in order to be valid for any interval of the form $[x_i, x_{i+1}]$, it requires that
+\begin{equation}
+\frac{\partial C(x,t) }{\partial t}=\frac{\partial  }{\partial x}
+\left(D(x) \frac{\partial C(x,t)}{\partial x}\right).
+\label{eq:dif_model}
+\end{equation}
+If $D(x)$ is independent of $x$, we arrive at the same familiar equation used in \citet{zhang1993headspace}. However, we will assume the media is anisotropic, so that the diffusivity is not constant, as actually happens in the microextraction devices at interfaces of compartments. By using the model proposed in \citet{zhang1993headspace}, compactly written as $C_t=DC_{xx}$, we can't, in general, expect local mass conservation of the system. However, with the slight change in the model, by considering the divergence of a flux term, as in equation \eqref{eq:dif_model}, the mass conservation is readily obtained in the interior of the compartment for non constant diffusion processes and we will also insure it at the compartment interfaces.
+
+Without loss of generality, we may assume $L_y=1$ and $L_z=1$, as the solution of the problem is independent on these values. Now, the mass variation at an interval $[x_i, x_{i+1}]$ can be written as 
+\begin{equation}
+\frac{d M_{i+1/2}(t)}{dt}= J(x_{i}, t)-J(x_{i+1}).
+\end{equation}
+The diffusion fluxes may be obtained via centred differencing (second order accurate with respect to $dx$) formula as,
+ \begin{equation}
+ J(x_{i}, t)=-D(x_i)\frac{C_{i+1/2}(t)-C_{i-1/2}(t)}{dx}+O(dx^2).
+ \end{equation}
+Using the mean concentration instead of the pointwise concentration (a second order approximation in $dx$),
+\begin{equation}
+C_{i+1/2}(t)=\frac{1}{dx}\int_{x_i}^{x_{i+1}}C(x,t)\,dx=\frac{1}{dx}M_{i+1/2}(t) + O(dx^2),
+\end{equation}
+we may write the approximate diffusion flux as,
+ \begin{equation}
+ J(x_{i}, t)=-D(x_i)\frac{M_{i+1/2}(t)-M_{i-1/2}(t)}{dx^2} + O(dx^2),
+ \end{equation}
+ where the first order $O(dx)$ terms cancel due to the symmetry of the differences (midpoint), resulting in a second order accurate scheme. 
+Therefore, the evolution of the mass in this approximate system is given by
+\begin{equation}
+\frac{d M_{i+1/2}(t)}{dt}= \frac{D(x_{i+1})M_{i+3/2}(t)-(D(x_{i+1})+D(x_{i}))M_{i+1/2}(t) + D(x_i)M_{i-1/2}(t)}{dx^2},
+\end{equation}
+which is valid in the interior of the domain $i=1,...,n-1$.
+
+
+At the boundaries of the compartment ($x_0=0$ and $x_n=L_x$) we may enforce one of two boundary conditions of interest:
+\begin{enumerate}
+\item[(i)] A flux condition, defining an exact value of $J(x_0, t)$ or $J(x_n, t)$ for all times, also known as Neumann boundary condition. The interesting value for our problem is to set a no flux boundary conditions, which may be imposed by simply forcing $J(x_0, t)=0$ or $J(x_N, t)=0$, or, equivalently, that
+\begin{equation}
+\frac{\partial C(x_0,t)}{\partial x}=0, \quad \frac{\partial C(x_N,t)}{\partial x}=0.
+\end{equation}
+This condition is useful for if the compartment if the first ($J(x_0, t)=0$) or last compartment ($J(x_n, t)=0$), so that the system is closed (conserves mass globally).
+\item[(ii)] An interface boundary condition, defined when the boundary meets another compartment. At these interfaces we will impose that the concentrations always respect a certain proportion ratio, that is, the limits from left and right of the transition point are such that, for example in case of an interface at point $x_n$, 
+\begin{equation}
+\lim_{x\rightarrow x_n^{-}} C(x, t) = K \lim_{x\rightarrow x_n^{+}} C(x, t),
+\end{equation}
+where $K$ defines the proportionality gap.
+Additionally, the interface boundary conditions require that $J(x_0^-, t)=J(x_0^+, t)$ or  $J(x_n^-, t)=J(x_n^+, t)$, which mean, for example for the point $x_n$,
+\begin{equation}
+D(x_n^-) \frac{\partial C(x_n^-,t)}{\partial x} = D(x_n^+) \frac{\partial C(x_n^+,t)}{\partial x},
+\end{equation}
+which basically states that, in the limit, the outward flow of the compartment ($x_n^{-}$) matches the inward flow in the adjacent compartment ($x_n^{+}$), ensuring mass conservation.
+
+\end{enumerate}
+
+Numerically, these boundary conditions can be enforced with the following approximations:
+\begin{enumerate}
+\item[(i')] The no flow condition can be imposed by simply considering either $J(x_0,t)=0$ or $J(x_n,t)=0$, so that
+\begin{equation}
+\frac{d M_{1/2}(t)}{dt}= D(x_{1})\frac{M_{3/2}(t)-M_{1/2}(t) }{dx^2},
+\end{equation}
+or
+\begin{equation}
+\frac{d M_{n-1/2}(t)}{dt}= D(x_{n-1})\frac{M_{n-3/2}(t)-M_{n-1/2}(t) }{dx^2}.
+\end{equation}
+
+\item[(ii')] 
+In order to ensure mass conservation in discrete level for the interface boundary condition, we need to have a single diffusion coefficient at the point $D(x_n)$. A usual choice in this case is to have
+\begin{equation}
+D(x_n)= \frac{D(x_{n-1/2})+D(x_{n+1/2})}{2},
+\end{equation}
+where $D(x_{n-1/2})$ is the diffusion coefficient at the cell control volume of the compartment and $D(x_{n+1/2})$ will be the diffusion at the fist control volume of the neighbor compartment.
+
+At the interface points, we also need to impose the concentration proportion ratio. This implies in a mass proportionality, that may be written, for $x_n$, as
+\begin{equation}
+M_{n-1/2}=K M_{n+1/2}.
+\end{equation}
+This means that, when we are at the closest control volume from the left to the transition point, we have
+\begin{equation}
+\frac{d M_{n-1/2}}{dt}= \frac{D(x_{n+1})M_{n-1/2}/K-(D(x_{n+1})+D(x_{n}))M_{n-1/2} + D(x_{n})M_{n-3/2}}{dx^2},
+\end{equation}
+where $D(x_{n+1})$ indicates the diffusion coefficient on the point $x_1$ of the adjacent compartment.
+An analogous construction may be built when the interface is at point $x_0$.
+\end{enumerate}
+
+
+If the diffusion coefficient is known for all points defining the devide, we now can solve the system independently for each compartment. For example, considering a compartment with no flow condition at $x_0$ and interface at $x_n$, we have
+
+\begin{eqnarray*}
+\frac{d M_{1/2}}{dt}&=& D_1\frac{M_{3/2}-M_{1/2} }{dx^2},\\
+\frac{d M_{i+1/2}}{dt}&=& \frac{D_{i+1}M_{i+3/2}-(D_{i+1}+D_{i})M_{i+1/2} + D_iM_{i-1/2}}{dx^2}, \,\, i=1,...,n-2,\\
+\frac{d M_{n-1/2}}{dt}&=& \frac{D_{n+1}M_{n-1/2}/K-(D_{n+1}+D_{n})M_{n-1/2} + D_{n}M_{n-3/2}}{dx^2}, \\
+\end{eqnarray*}
+where $D_i=D(x_i)$. Note that, if $K=1$, the interface condition recovers the no flow condition, isolating this compartment from the adjacent one.
+
+This is tridiagonal linear differential system. Let $\vec{M}$ denote the vector of masses in the compartment, that is,
+$\vec{M}(t)=[M_{1/2}(t), M_{3/2}(t), M_{5/2}(t), ..., M_{n-1/2}(t)$, containing $n$ values. Then the system maybe simply written as
+\begin{equation}
+\frac{d \vec{M}(t)}{dt}=A\vec{M}(t),
+\end{equation}
+where $A$ is an $n\times n$ matrix given by the diffusion coefficients as
+\begin{equation}
+A=
+\frac{1}{dx^2}
+\begin{pmatrix}
+-D_1 & D_1 & 0 & 0& \cdots & 0 \\
+D_1 & -(D_1+D_2) & D_2 & 0 & \cdots & 0 \\
+0 & D_2 & -(D_2+D_3) & D_4 & \cdots & 0 \\
+\vdots  & \vdots & \vdots & \vdots & \ddots & \vdots  \\
+0 & \cdots & 0 & D_{n-1} & -(D_{n-1}+D_n) & D_n \\
+0 & \cdots & 0 & 0 & D_n & -D_n+(1/K-1)D_{n+1} \\
+\end{pmatrix}
+\end{equation}
+
+The numerical solution of the time evolution maybe obtained also via finite differences formulas. Given a time span we wish to simulate, say $[0,T]$, we may partition this interval into $K$ time steps, $t_k=k\, dt$, where $dt=T/K$. Let $\vec{M}^k\approx  \vec{M}(t_k)$ be an approximate solution of $\vec{M}(t_k)$ at time $t_k$. An explicit solution of the problem, with first order accuracy with respect to time-step-size ($dt$), is
+\begin{equation}
+\vec{M}^{k+1}=\vec{M}^k+dt \,A\vec{M}^k
+\end{equation}
+which is the well-known explicit Euler scheme. While this scheme is attractive and easy to implement, it imposes serious stability conditions on the time-step-size, 
+\begin{equation}
+D\frac{dt}{dx^2}<\frac{1}{2},
+\end{equation} 
+where $D$ is the maximum diffusion coefficient in the compartment. For small $dx$, the required $dt$ for the method to work (stably) is usually prohibitive. Therefore, implicit schemes are usually adopted. Here we will a Crank-Nicolson scheme, which is second order accurate with respect to $dt$ and unconditionally stable, may be written as
+\begin{equation}
+\vec{M}^{k+1}=\vec{M}^k+\frac{dt}{2}A\left(\vec{M}^k+\,\vec{M}^{k+1}\right).
+\end{equation}
+
+In this implicit scheme we cannot obtain the approximation for time $t_{k+1}$ directly from values at time $t_k$, as we need to solve a linear system of equation at each time-step. The system is defined as follows
+\begin{equation}
+(I-\frac{dt}{2}A)\vec{M}^{k+1}=(I+\frac{dt}{2}A)\vec{M}^{k},
+\end{equation}
+where $I$ is the $n\times n$ identity matrix. Since $A$ is tridiagonal, this system is very simple to solve with Gaussian Elimination.
+
+
+%% The Appendices part is started with the command \appendix;
+%% appendix sections are then done as normal sections
+%% \appendix
+
+%% \section{}
+%% \label{}
+
+%% For citations use: 
+%%       \citet{<label>} ==> Jones et al. [21]
+%%       \citep{<label>} ==> [21]
+%%
+
+%% If you have bibdatabase file and want bibtex to generate the
+%% bibitems, please use
+%%
+%%  \bibliographystyle{elsarticle-num-names} 
+%%  \bibliography{<your bibdatabase>}
+
+%% else use the following coding to input the bibitems directly in the
+%% TeX file.
+\bibliographystyle{elsarticle-num-names} 
+\bibliography{references.bib}
+
+%\begin{thebibliography}{00}
+
+%% \bibitem[Author(year)]{label}
+%% Text of bibliographic item
+
+
+
+%\end{thebibliography}
+
+\end{document}
+
+\endinput
+%%
+%% End of file `elsarticle-template-num-names.tex'.
