@@ -194,7 +194,7 @@ This condition is useful for if the compartment if the first ($J(x_0, t)=0$) or 
 where $K$ defines the proportionality gap.
 Additionally, the interface boundary conditions require that $J(x_0^-, t)=J(x_0^+, t)$ or  $J(x_n^-, t)=J(x_n^+, t)$, which mean, for example for the point $x_n$,
 \begin{equation}
-D(x_n^-) \frac{\partial C(x_n^-,t)}{\partial x} = D(x_n^+) \frac{\partial C(x_n^+,t)}{\partial x},
+\lim_{x\rightarrow x_n^-}D(x) \frac{\partial C(x,t)}{\partial x} = \lim_{x\rightarrow x_n^+} D(x) \frac{\partial C(x,t)}{\partial x},
 \end{equation}
 which basically states that, in the limit, the outward flow of the compartment ($x_n^{-}$) matches the inward flow in the adjacent compartment ($x_n^{+}$), ensuring mass conservation.
 
@@ -212,25 +212,23 @@ or
 \end{equation}
 
 \item[(ii')] 
-In order to ensure mass conservation in discrete level for the interface boundary condition, we need to have a single diffusion coefficient at the point $D(x_n)$. A usual choice in this case is to have
-\begin{equation}
-D(x_n)= \frac{D(x_{n-1/2})+D(x_{n+1/2})}{2},
-\end{equation}
-where $D(x_{n-1/2})$ is the diffusion coefficient at the cell control volume of the compartment and $D(x_{n+1/2})$ will be the diffusion at the fist control volume of the neighbor compartment.
-
-At the interface points, we also need to impose the concentration proportion ratio. This implies in a mass proportionality, that may be written, for $x_n$, as
+At the interface points, we need to impose the concentration proportion ratio. This also implies in a mass proportionality, that may be written, for $x_n$, as
 \begin{equation}
 M_{n-1/2}=K M_{n+1/2}.
 \end{equation}
-This means that, when we are at the closest control volume from the left to the transition point, we have
+In the limit of $dx\rightarrow 0$ the neighbor cells $x_{n-1/2}$ and $x_{n+1/2}$ should converge towards obeying the concentration proportion ratio.
+
+The flux condition cannot be enforced exactly at the interface $x_n$, as it would decouple the compartments. An option is to enforce neighbor fluxes to satisfy the continuous flow condition.
 \begin{equation}
-\frac{d M_{n-1/2}}{dt}= \frac{D(x_{n})M_{n-1/2}/K-(D(x_{n})+D(x_{n-1}))M_{n-1/2} + D(x_{n-1})M_{n-3/2}}{dx^2},
+ D(x_{n-1})\frac{M_{n-3/2}(t)-M_{n-1/2}(t) }{dx}= D(x_{n+1})\frac{M_{n+3/2}(t)-M_{n+1/2}(t) }{dx}.
 \end{equation}
+
+
 An analogous construction may be built when the interface is at point $x_0$.
 \end{enumerate}
 
 
-If the diffusion coefficient is known for all points defining the devide, we now can solve the system independently for each compartment. For example, considering a compartment with no flow condition at $x_0$ and interface at $x_n$, we have
+If the diffusion coefficient is known for all points defining the device, we now can solve the system independently for each compartment. For example, considering a compartment with no flow condition at $x_0$ and interface at $x_n$, we have
 
 \begin{eqnarray*}
 \frac{d M_{1/2}}{dt}&=& D_1\frac{M_{3/2}-M_{1/2} }{dx^2},\\
