@@ -132,52 +132,33 @@ J(x,t)=-D(x) \frac{\partial C(x,t)}{\partial x},
 \end{equation}
 where $C(x,t)$ denotes the concentration of the material (amount of substance per volume) undergoing a diffusion process, at a certain place and time; $D(x)$ denotes the diffusion coefficient (cross section area per time units), which depends on the environment that contains the substance, therefore may be different in different $x$ positions.
 
-We will subdivide the compartment into a set of discrete points. If we define the compartment to be positioned in the interval $[0, L_x]$, we can subdivide it into $N$ sub-intervals of size $dx$, such that $x_i=i\,dx$, $i=0, 1, ..., n$ with $dx=L_x/n$. The mass $M_{i+1/2}$ on a sub-interval $[x_i, x_{i+1}]$ of the domain depends only on the lateral fluxes, therefore,
+We will subdivide the compartment into a set of discrete points. If we define the compartment to be positioned in the interval $[0, L_x]$, we can subdivide it into $N$ sub-intervals of size $dx$, such that $x_i=i\,dx$, $i=0, 1, ..., n$ with $dx=L_x/n$. The mass for each control volume may be defined as 
 \begin{equation}
-\frac{d M_{i+1/2}(t)}{dt}= L_y\, L_z (J(x_{i}, t)-J(x_{i+1})),
+M_{i}(t)=L_y\, L_z\,\int_{x_{i-1/2}}^{x_{i+1/2}}C(x,t) \,dx,
+\end{equation}
+on a sub-interval $[x_{i-1/2}, x_{i+1/2}]$, where $x_{i+1/2}$ indicates the midpoint of the interval $[x_i, x_{i+1}]$.
+
+
+
+The mass change in time depends only on the lateral fluxes of the control volume, therefore,
+\begin{equation}
+\frac{d M_{i}(t)}{dt}= L_y\, L_z (J(x_{i-1/2}, t)-J(x_{i+1/2})).
 \label{eq:localmassconserv}
 \end{equation}
-where
-\begin{equation}
-M_{i+1/2}(t)=L_y\, L_z\,\int_{x_i}^{x_{i+1}}C(x,t) \,dx,
-\end{equation}
-and we have used the notation of $i+1/2$ so that it is clear that this mass is defined between $i$ and $i+1$ positions. Also note that the flux in the position $x_i$ has positive sign, as it is indicating inward flow into the compartment, and the flux in the position $x_{i+1}$ has negative sign, since the flow at this point indicates outward flow.
+Note that the flux in the position $x_{i-1/2}$ has positive sign, as it is indicating inward flow into the compartment, and the flux in the position $x_{i+1/2}$ has negative sign, since the flow at this point indicates outward flow.
 
 
-Equation \ref{eq:localmassconserv} may be re-written, assuming sufficient regularity of the functions, as
+Equation \eqref{eq:localmassconserv} may be re-written, assuming sufficient regularity of the functions, as
 \begin{equation}
-\int_{x_i}^{x_{i+1}} \frac{\partial C(x,t) }{\partial t}  \,dx =  -\int_{x_i}^{x_{i+1}}\frac{\partial J(x,t)}{\partial x} 
+\int_{x_{i-1/2}}^{x_{i+1/2}} \frac{\partial C(x,t) }{\partial t}  \,dx =  -\int_{x_{i-1/2}}^{x_{i+1/2}}\frac{\partial J(x,t)}{\partial x} 
 \end{equation}
-where we note that the problem is therefore independent of $L_y$ and $L_z$. Also,  in order to be valid for any interval of the form $[x_i, x_{i+1}]$, it requires that
+where we note that the problem is therefore independent of $L_y$ and $L_z$. Also,  in order to be valid for any interval of the form $[x_{i-1/2}, x_{i+1/2}]$, it requires that
 \begin{equation}
 \frac{\partial C(x,t) }{\partial t}=\frac{\partial  }{\partial x}
-\left(D(x) \frac{\partial C(x,t)}{\partial x}\right).
+\left(D(x) \frac{\partial C(x,t)}{\partial x}\right), \quad x\in (0, L_x).
 \label{eq:dif_model}
 \end{equation}
 If $D(x)$ is independent of $x$, we arrive at the same familiar equation used in \citet{zhang1993headspace}. However, we will assume the media is anisotropic, so that the diffusivity is not constant, as actually happens in the microextraction devices at interfaces of compartments. By using the model proposed in \citet{zhang1993headspace}, compactly written as $C_t=DC_{xx}$, we can't, in general, expect local mass conservation of the system. However, with the slight change in the model, by considering the divergence of a flux term, as in equation \eqref{eq:dif_model}, the mass conservation is readily obtained in the interior of the compartment for non constant diffusion processes and we will also insure it at the compartment interfaces.
-
-Without loss of generality, we may assume $L_y=1$ and $L_z=1$, as the solution of the problem is independent on these values. Now, the mass variation at an interval $[x_i, x_{i+1}]$ can be written as 
-\begin{equation}
-\frac{d M_{i+1/2}(t)}{dt}= J(x_{i}, t)-J(x_{i+1}).
-\end{equation}
-The diffusion fluxes may be obtained via centred differencing (second order accurate with respect to $dx$) formula as,
- \begin{equation}
- J(x_{i}, t)=-D(x_i)\frac{C_{i+1/2}(t)-C_{i-1/2}(t)}{dx}+O(dx^2).
- \end{equation}
-Using the mean concentration instead of the pointwise concentration (a second order approximation in $dx$),
-\begin{equation}
-C_{i+1/2}(t)=\frac{1}{dx}\int_{x_i}^{x_{i+1}}C(x,t)\,dx=\frac{1}{dx}M_{i+1/2}(t) + O(dx^2),
-\end{equation}
-we may write the approximate diffusion flux as,
- \begin{equation}
- J(x_{i}, t)=-D(x_i)\frac{M_{i+1/2}(t)-M_{i-1/2}(t)}{dx^2} + O(dx^2),
- \end{equation}
- where the first order $O(dx)$ terms cancel due to the symmetry of the differences (midpoint), resulting in a second order accurate scheme. 
-Therefore, the evolution of the mass in this approximate system is given by
-\begin{equation}
-\frac{d M_{i+1/2}(t)}{dt}= \frac{D(x_{i+1})M_{i+3/2}(t)-(D(x_{i+1})+D(x_{i}))M_{i+1/2}(t) + D(x_i)M_{i-1/2}(t)}{dx^2},
-\end{equation}
-which is valid in the interior of the domain $i=1,...,n-1$.
 
 
 At the boundaries of the compartment ($x_0=0$ and $x_n=L_x$) we may enforce one of two boundary conditions of interest:
@@ -189,38 +170,91 @@ At the boundaries of the compartment ($x_0=0$ and $x_n=L_x$) we may enforce one 
 This condition is useful for if the compartment if the first ($J(x_0, t)=0$) or last compartment ($J(x_n, t)=0$), so that the system is closed (conserves mass globally).
 \item[(ii)] An interface boundary condition, defined when the boundary meets another compartment. At these interfaces we will impose that the concentrations always respect a certain proportion ratio, that is, the limits from left and right of the transition point are such that, for example in case of an interface at point $x_n$, 
 \begin{equation}
-\lim_{x\rightarrow x_n^{-}} C(x, t) = K \lim_{x\rightarrow x_n^{+}} C(x, t),
+\lim_{x\rightarrow x_n^{-}} C(x, t) = K \lim_{x\rightarrow x_n^{+}} C'(x, t),
 \end{equation}
-where $K$ defines the proportionality gap.
-Additionally, the interface boundary conditions require that $J(x_0^-, t)=J(x_0^+, t)$ or  $J(x_n^-, t)=J(x_n^+, t)$, which mean, for example for the point $x_n$,
+where $K$ defines the proportionality gap and $C'$ is the concentration on the neighbor compartment.
+Additionally, the interface boundary conditions require that $J(x_0^-, t)=J(x_0^+, t)$ or  $J(x_n^-, t)=J'(x_n^+, t)$, where $J'$ is the flux on the neighbor compartment, which mean, for example for the point $x_n$,
 \begin{equation}
-\lim_{x\rightarrow x_n^-}D(x) \frac{\partial C(x,t)}{\partial x} = \lim_{x\rightarrow x_n^+} D(x) \frac{\partial C(x,t)}{\partial x},
+\lim_{x\rightarrow x_n^-}D(x) \frac{\partial C(x,t)}{\partial x} = \lim_{x\rightarrow x_n^+} D'(x) \frac{\partial C'(x,t)}{\partial x},
 \end{equation}
 which basically states that, in the limit, the outward flow of the compartment ($x_n^{-}$) matches the inward flow in the adjacent compartment ($x_n^{+}$), ensuring mass conservation.
 
 \end{enumerate}
 
+Consider two compartments side by side, with no flux on the outer boundaries and an interface condition in between the compartments:
+\begin{itemize}
+\item Is the problem well posed for any $K$, $D_1$, $D_2$ and given initial conditions? 
+\item We know a steady state solution exists for this problem if the initial condition is constant on each side respecting the gap condition. But does the system allow existence of transient solution? Are they unique given the parameters?
+
+\end{itemize}
+
+\section{Numerical Model}
+
+Without loss of generality, we may assume $L_y=1$ and $L_z=1$, as the solution of the problem is independent on these values. Now, the mass variation at an interval $[x_{i-1/2}, x_{i+1/2}]$ can be written as 
+\begin{equation}
+\frac{d M_{i}(t)}{dt}= J(x_{i-1/2}, t)-J(x_{i+1/2}).
+\end{equation}
+The diffusion fluxes may be obtained via centered differences (second order accurate with respect to $dx$) formula as,
+ \begin{equation}
+ J(x_{i-1/2}, t)=-D(x_{i-1/2})\frac{C_{i}(t)-C_{i-1}(t)}{dx}+O(dx^2),
+ \end{equation}
+  \begin{equation}
+ J(x_{i+1/2}, t)=-D(x_{i+1/2})\frac{C_{i+1}(t)-C_{i}(t)}{dx}+O(dx^2).
+ \end{equation}
+ 
+Using the mean concentration instead of the pointwise concentration (a second order approximation in $dx$),
+\begin{equation}
+C_{i}(t)=\frac{1}{dx}\int_{x_{i-1/2}}^{x_{i+1/2}}C(x,t)\,dx=\frac{1}{dx}M_{i}(t) + O(dx^2),
+\end{equation}
+we may write the approximate diffusion flux as,
+ \begin{equation}
+ J(x_{i-1/2}, t)=-D(x_{i-1/2})\frac{M_{i}(t)-M_{i-1}(t)}{dx^2} + O(dx^2),
+ \end{equation}
+ where the first order $O(dx)$ terms cancel due to the symmetry of the differences (midpoint), resulting in a second order accurate scheme. 
+Therefore, the evolution of the mass in this approximate system is given by
+\begin{equation}
+\frac{d M_{i}(t)}{dt}= \frac{D(x_{i+1/2})M_{i+1}(t)-(D(x_{i+1/2})+D(x_{i-1/2}))M_{i}(t) + D(x_{i-1/2})M_{i-1}(t)}{dx^2},
+\end{equation}
+which is valid in the interior of the domain $i=1,...,n-1$.
+
+
 Numerically, these boundary conditions can be enforced with the following approximations:
 \begin{enumerate}
 \item[(i')] The no flow condition can be imposed by simply considering either $J(x_0,t)=0$ or $J(x_n,t)=0$, so that
 \begin{equation}
-\frac{d M_{1/2}(t)}{dt}= D(x_{1})\frac{M_{3/2}(t)-M_{1/2}(t) }{dx^2},
+\frac{d M_{1}(t)}{dt}= D(x_{3/2})\frac{M_{2}(t)-M_{1}(t) }{dx^2},
 \end{equation}
 or
 \begin{equation}
-\frac{d M_{n-1/2}(t)}{dt}= D(x_{n-1})\frac{M_{n-3/2}(t)-M_{n-1/2}(t) }{dx^2}.
+\frac{d M_{n-1}(t)}{dt}= D(x_{n-3/2})\frac{M_{n-2}(t)-M_{n-1}(t) }{dx^2}.
 \end{equation}
 
 \item[(ii')] 
 At the interface points, we need to impose the concentration proportion ratio. This also implies in a mass proportionality, that may be written, for $x_n$, as
 \begin{equation}
-M_{n-1/2}=K M_{n+1/2}.
+M_{n}=K M'_{n},
+\label{eq:gap}
 \end{equation}
-In the limit of $dx\rightarrow 0$ the neighbor cells $x_{n-1/2}$ and $x_{n+1/2}$ should converge towards obeying the concentration proportion ratio.
+where $M'_{n}$ is the mass on the neighbor compartment at the same $x_n$ point where the boundary of the reference compartment.
 
-The flux condition cannot be enforced exactly at the interface $x_n$, as it would decouple the compartments. An option is to enforce neighbor fluxes to satisfy the continuous flow condition.
+The flux condition can be discretized with finite differences as
 \begin{equation}
- D(x_{n-1})\frac{M_{n-3/2}(t)-M_{n-1/2}(t) }{dx}= D(x_{n+1})\frac{M_{n+3/2}(t)-M_{n+1/2}(t) }{dx}.
+ D(x_{n-1/2})\frac{M_{n}(t)-M_{n-1}(t) }{dx}= D(x_{n+1/2})\frac{M'_{n+1}(t)-M'_{n}(t) }{dx}.
+ \label{eq:discrete_flux_interface}
+\end{equation}
+
+We may therefore enforce the gap \eqref{eq:gap} condition to hold in equation \eqref{eq:discrete_flux_interface} that leads to explicit expression of $M_{n}$ in terms of $M_{n-1}(t)$ and $M'_{n+1}(t)$:
+\begin{equation}
+M_{n}(t) = \frac{ KD(x_{n+1/2})}{a_n} M'_{n+1}(t)+\frac{ KD(x_{n-1/2})}{a_n} M_{n-1}(t)
+\label{eq:gap+discrete_flux_interface}
+\end{equation}
+where 
+\begin{equation}
+a_{n}=D(x_{n+1/2})+KD(x_{n-1/2})
+\end{equation}
+Analogously, we could isolate $M'_n$, to obtain, 
+\begin{equation}
+M'_{n}(t) = \frac{ D(x_{n+1/2})}{a_n} M'_{n+1}(t)+\frac{ D(x_{n-1/2})}{a_n} M_{n-1}(t).
 \end{equation}
 
 
@@ -228,14 +262,51 @@ An analogous construction may be built when the interface is at point $x_0$.
 \end{enumerate}
 
 
-If the diffusion coefficient is known for all points defining the device, we now can solve the system independently for each compartment. For example, considering a compartment with no flow condition at $x_0$ and interface at $x_n$, we have
+If the diffusion coefficient is known for all points defining the device, we now can now build a differential system only in time to be solved. For example, consider a compartment with no flow condition at $x_0$, interface at $x_n$ and constant diffusion coefficient $D$.
 
 \begin{eqnarray*}
-\frac{d M_{1/2}}{dt}&=& D_1\frac{M_{3/2}-M_{1/2} }{dx^2},\\
-\frac{d M_{i+1/2}}{dt}&=& \frac{D_{i+1}M_{i+3/2}-(D_{i+1}+D_{i})M_{i+1/2} + D_iM_{i-1/2}}{dx^2}, \,\, i=1,...,n-2,\\
-\frac{d M_{n-1/2}}{dt}&=& \frac{D_{n}M_{n-1/2}/K-(D_{n}+D_{n-1})M_{n-1/2} + D_{n-1}M_{n-3/2}}{dx^2}, \\
+\frac{d M_{1}}{dt}&=& D\frac{M_{2}-M_{1} }{dx^2},\\
+\frac{d M_{i}}{dt}&=& \frac{DM_{i+1}-2D M_{i} + DM_{i-1}}{dx^2}, \,\, i=2,...,n-2,\\
+\frac{d M_{n-1}}{dt}&=& \frac{D'c M'_{n+1}(t)+Db M_{n-1}(t)  + DM_{n-2}}{dx^2},
 \end{eqnarray*}
-where $D_i=D(x_i)$. Note that, if $K=1$, the interface condition recovers the no flow condition, isolating this compartment from the adjacent one.
+where
+\begin{equation}
+b=-\left(\frac{2D+KD}{D'+KD}\right)
+%b=-\left(\frac{2D+K_lD_l}{D_{l+1}+K_lD_l}\right)
+\end{equation}
+\begin{equation}
+c=\frac{D K }{D'+KD}
+\end{equation}
+Note that this system is coupled in two places with the system of the neighbor compartment: via diffusion coefficient $D'$ (note that $a_{n+1}$ and $a_{n-1}$ depend on the diffusion coefficient of the neighbor compartment too); and via the mass at first inner point of the neighbor compartment $M'_{n+1}$
+
+If we have $N$ compartments, with constant diffusion coefficients $D_l$, $l=1,2,...,N$, all with partition interfaces between, with constants $K_l$, $l=1,2,...N-1$, and no flow conditions at the outer boundaries, assuming that have discretized each compartment with $n_l$ sub-intervals, then we may write the fully coupled system as
+\begin{equation}
+\frac{d \vec{M}(t)}{dt}=A\vec{M}(t),
+\end{equation}
+where $A$ is a square matrix with dimension $n\times n$, where $n=\sum_{l=1}^{N}(n_l-1)$ and represents the interaction between all interior mass points (interface points are excluded and calculated diagnostically from equation \eqref{eq:gap+discrete_flux_interface}), given by
+\begin{equation}
+A=
+\frac{1}{dx^2}
+\begin{pmatrix}
+-D_1 & D_1 & 0 & 0& 0 &  \cdots & \cdots &  \cdots& \cdots &\cdots \\
+D_1 & -2D_1 & D_1 & 0 & 0 & \cdots & \cdots &  \cdots & \cdots & \cdots \\
+0 & D_1 & -2D_1 & D_1 & 0 & \cdots & \cdots &  \cdots & \cdots & \cdots \\
+\vdots  & \vdots & \vdots & \vdots & \ddots & \cdots & \cdots &  \cdots & \cdots& \cdots  \\
+0 & \vdots & \vdots& 0 & D_1 & D_1b_1 & D_2c_1 & 0& \cdots & \cdots\\
+0 & \vdots  & \vdots &0 & 0 & D_2 & D_2 b'_2 & D_2 \\
+0  & \vdots &\vdots  & 0 & 0 & 0 & \ddots & \vdots  \\
+\end{pmatrix}
+\end{equation}
+\begin{equation}
+b_l=-\left(\frac{2D_l+KD_l}{D_{l+1}+K_lD_l}\right)
+\end{equation}
+\begin{equation}
+b'_l=-\left(\frac{2D_l+KD_l}{D_{l-1}+K_lD_l}\right)
+\end{equation}
+
+\begin{equation}
+c=\frac{D K }{D'+KD}
+\end{equation}
 
 This is tridiagonal linear differential system. Let $\vec{M}$ denote the vector of masses in the compartment, that is,
 $\vec{M}(t)=[M_{1/2}(t), M_{3/2}(t), M_{5/2}(t), ..., M_{n-1/2}(t)]$, containing $n$ values. Then the system maybe simply written as
