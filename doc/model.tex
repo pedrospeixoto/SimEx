@@ -220,7 +220,7 @@ which is valid in the interior of the domain $i=1,...,n-1$.
 
 Numerically, these boundary conditions can be enforced with the following approximations:
 \begin{enumerate}
-\item[(i')] The no flow condition can be imposed by simply considering either $J(x_0,t)=0$ or $J(x_n,t)=0$, so that
+\item[(i')] The no flow condition can be imposed by simply considering either $J(x_{1/2},t)=0$ or $J(x_{n-1/2},t)=0$, so that
 \begin{equation}
 \frac{d M_{1}(t)}{dt}= D(x_{3/2})\frac{M_{2}(t)-M_{1}(t) }{dx^2},
 \end{equation}
@@ -245,16 +245,12 @@ The flux condition can be discretized with finite differences as
 
 We may therefore enforce the gap \eqref{eq:gap} condition to hold in equation \eqref{eq:discrete_flux_interface} that leads to explicit expression of $M_{n}$ in terms of $M_{n-1}(t)$ and $M'_{n+1}(t)$:
 \begin{equation}
-M_{n}(t) = \frac{ KD(x_{n+1/2})}{a_n} M'_{n+1}(t)+\frac{ KD(x_{n-1/2})}{a_n} M_{n-1}(t)
+M_{n}(t) = \frac{ KD(x_{n+1/2})}{D(x_{n+1/2})+KD(x_{n-1/2})} M'_{n+1}(t)+\frac{ KD(x_{n-1/2})}{D(x_{n+1/2})+KD(x_{n-1/2})} M_{n-1}(t).
 \label{eq:gap+discrete_flux_interface}
-\end{equation}
-where 
-\begin{equation}
-a_{n}=D(x_{n+1/2})+KD(x_{n-1/2})
 \end{equation}
 Analogously, we could isolate $M'_n$, to obtain, 
 \begin{equation}
-M'_{n}(t) = \frac{ D(x_{n+1/2})}{a_n} M'_{n+1}(t)+\frac{ D(x_{n-1/2})}{a_n} M_{n-1}(t).
+M'_{n}(t) = \frac{ D(x_{n+1/2})}{D(x_{n+1/2})+KD(x_{n-1/2})} M'_{n+1}(t)+\frac{ D(x_{n-1/2})}{D(x_{n+1/2})+KD(x_{n-1/2})} M_{n-1}(t).
 \end{equation}
 
 
@@ -262,103 +258,42 @@ An analogous construction may be built when the interface is at point $x_0$.
 \end{enumerate}
 
 
+
 If the diffusion coefficient is known for all points defining the device, we now can now build a differential system only in time to be solved. For example, consider a compartment with no flow condition at $x_0$, interface at $x_n$ and constant diffusion coefficient $D$.
 
 \begin{eqnarray*}
-\frac{d M_{1}}{dt}&=& D\frac{M_{2}-M_{1} }{dx^2},\\
-\frac{d M_{i}}{dt}&=& \frac{DM_{i+1}-2D M_{i} + DM_{i-1}}{dx^2}, \,\, i=2,...,n-2,\\
-\frac{d M_{n-1}}{dt}&=& \frac{D'c M'_{n+1}(t)+Db M_{n-1}(t)  + DM_{n-2}}{dx^2},
+\frac{d M_{1}}{dt}&=& \frac{DM_{2}-DM_{1} }{dx^2},\\
+\frac{d M_{i}}{dt}&=& \frac{DM_{i-1}-2D M_{i} + DM_{i+1}}{dx^2}, \,\, i=2,...,n-2,\\
+\frac{d M_{n-1}}{dt}&=& \frac{1}{dx^2}\left(D M_{n-2}-D\frac{DK+2D'}{DK+D'} M_{n-1}  + D\frac{D'K}{KD+D'}M'_{n+1}\right),\\
+\frac{d M'_{n+1}}{dt}&=& \frac{1}{dx^2}\left(D'\frac{D}{KD+D'}M_{n-1} -D'\frac{D'+2DK}{DK+D'} M'_{n+1}(t)  + D' M'_{n+2}(t)\right),\label{eq:system}
 \end{eqnarray*}
-where
-\begin{equation}
-b=-\left(\frac{2D+KD}{D'+KD}\right)
-%b=-\left(\frac{2D+K_lD_l}{D_{l+1}+K_lD_l}\right)
-\end{equation}
-\begin{equation}
-c=\frac{D K }{D'+KD}
-\end{equation}
-Note that this system is coupled in two places with the system of the neighbor compartment: via diffusion coefficient $D'$ (note that $a_{n+1}$ and $a_{n-1}$ depend on the diffusion coefficient of the neighbor compartment too); and via the mass at first inner point of the neighbor compartment $M'_{n+1}$
+Note that this system is coupled, in two places, with the system of the neighbor compartment: via diffusion coefficient $D'$; and via the mass at first inner point of the neighbor compartment $M'_{n+1}$.
 
-If we have $N$ compartments, with constant diffusion coefficients $D_l$, $l=1,2,...,N$, all with partition interfaces between, with constants $K_l$, $l=1,2,...N-1$, and no flow conditions at the outer boundaries, assuming that have discretized each compartment with $n_l$ sub-intervals, then we may write the fully coupled system as
+\subsection{Multiples compartments}
+
+If we have $N$ compartments, each with constant diffusion coefficient $D_l$, $l=1,2,...,N$, all with partition interfaces between, with constants $K_l$, $l=1,2,...N-1$, and no flow conditions at the outer boundaries, assuming that have discretized each compartment with $n_l$ sub-intervals, then we may write the fully coupled system as
 \begin{equation}
 \frac{d \vec{M}(t)}{dt}=A\vec{M}(t),
 \end{equation}
-where $A$ is a square matrix with dimension $n\times n$, where $n=\sum_{l=1}^{N}(n_l-1)$ and represents the interaction between all interior mass points (interface points are excluded and calculated diagnostically from equation \eqref{eq:gap+discrete_flux_interface}), given by
-\begin{equation}
-A=
-\frac{1}{dx^2}
-\begin{pmatrix}
--D_1 & D_1 & 0 & 0& 0 &  \cdots & \cdots &  \cdots& \cdots &\cdots \\
-D_1 & -2D_1 & D_1 & 0 & 0 & \cdots & \cdots &  \cdots & \cdots & \cdots \\
-0 & D_1 & -2D_1 & D_1 & 0 & \cdots & \cdots &  \cdots & \cdots & \cdots \\
-\vdots  & \vdots & \vdots & \vdots & \ddots & \cdots & \cdots &  \cdots & \cdots& \cdots  \\
-0 & \vdots & \vdots& 0 & D_1 & D_1b_1 & D_2c_1 & 0& \cdots & \cdots\\
-0 & \vdots  & \vdots &0 & 0 & D_2 & D_2 b'_2 & D_2 \\
-0  & \vdots &\vdots  & 0 & 0 & 0 & \ddots & \vdots  \\
-\end{pmatrix}
-\end{equation}
-\begin{equation}
-b_l=-\left(\frac{2D_l+KD_l}{D_{l+1}+K_lD_l}\right)
-\end{equation}
-\begin{equation}
-b'_l=-\left(\frac{2D_l+KD_l}{D_{l-1}+K_lD_l}\right)
-\end{equation}
+where $A$ is a square matrix with dimension $n\times n$, where $n=\sum_{l=1}^{N}(n_l-1)$ and represents the interaction between all interior mass points (interface points are excluded and calculated diagnostically from equation \eqref{eq:gap+discrete_flux_interface}), given by equation \eqref{eq:system}. This is tridiagonal linear differential system with unknowns $\vec{M}(t)=[M_{1}(t), M_{2}(t), ..., M_{n_1-1}(t), M_{n_1+1}(t), ..., M_{n_1+n_2-1}(t), M_{n_1+n_2-1}(t), ..., M_{n}(t)]$, containing $n$ values. 
 
-\begin{equation}
-c=\frac{D K }{D'+KD}
-\end{equation}
 
-This is tridiagonal linear differential system. Let $\vec{M}$ denote the vector of masses in the compartment, that is,
-$\vec{M}(t)=[M_{1/2}(t), M_{3/2}(t), M_{5/2}(t), ..., M_{n-1/2}(t)]$, containing $n$ values. Then the system maybe simply written as
+The numerical solution of the time evolution maybe obtained also via finite differences formulas. Given a time span we wish to simulate, say $[0,T]$, we may partition this interval into $N_t$ time steps, $t_m=m\, dt$, where $dt=T/N_t$, for $m=0,1,...,N_t$. Let $\vec{M}^m\approx  \vec{M}(t_m)$ be an approximate solution of $\vec{M}(t_m)$ at time $t_m$. An explicit solution of the problem, with first order accuracy with respect to time-step-size ($dt$), is
 \begin{equation}
-\frac{d \vec{M}(t)}{dt}=A\vec{M}(t),
-\end{equation}
-where $A$ is an $n\times n$ matrix given by the diffusion coefficients as
-\begin{equation}
-A=
-\frac{1}{dx^2}
-\begin{pmatrix}
--D_1 & D_1 & 0 & 0& \cdots &  \cdots & 0 \\
-D_1 & -(D_1+D_2) & D_2 & 0 & \cdots & \cdots & 0 \\
-0 & D_2 & -(D_2+D_3) & D_3 & \cdots & \cdots & 0 \\
-\vdots  & \vdots & \vdots & \vdots & \ddots & \vdots  \\
-0 & \cdots & \cdots& 0 & D_{n-2} & -(D_{n-2}+D_{n-1}) & D_{n-1} \\
-0 & \cdots  & \cdots &0 & 0 & D_{n-1} & -D_{n-1}+(1/K-1)D_{n} \\
-\end{pmatrix}
-\end{equation}
-
-For a compartment with interface on the left ($K_l$) and right ($K_r$) the system would be defined via the following matrix,
-\begin{equation}
-A=
-\frac{1}{dx^2}
-\begin{pmatrix}
--(D_0+D_1)+K_lD_0 & D_1  & 0& \cdots &  \cdots & 0 \\
-D_1 & -(D_1+D_2) & D_2  & \cdots & \cdots & 0 \\
-0 & D_2 & -(D_2+D_3)  & \cdots & \cdots & 0 \\
-\vdots  & \vdots & \vdots  & \ddots & \vdots  \\
-0 & \cdots & \cdots & D_{n-2} & -(D_{n-2}+D_{n-1}) & D_{n-1} \\
-0 & \cdots  & \cdots  & 0 & D_{n-1} & -(D_{n-1}+D_n)+D_n/K_r \\
-\end{pmatrix}.
-\end{equation}
-
-It is easy to see that by setting $K=1$ recovers the no flux condition. Therefore, in the implementation, the interfaces at the boundary of the device will have a partition constant equal to 1, to ensure no flux condition.
-
-The numerical solution of the time evolution maybe obtained also via finite differences formulas. Given a time span we wish to simulate, say $[0,T]$, we may partition this interval into $K$ time steps, $t_k=k\, dt$, where $dt=T/K$. Let $\vec{M}^k\approx  \vec{M}(t_k)$ be an approximate solution of $\vec{M}(t_k)$ at time $t_k$. An explicit solution of the problem, with first order accuracy with respect to time-step-size ($dt$), is
-\begin{equation}
-\vec{M}^{k+1}=\vec{M}^k+dt \,A\vec{M}^k
+\vec{M}^{m+1}=\vec{M}^m+dt \,A\vec{M}^m
 \end{equation}
 which is the well-known explicit Euler scheme. While this scheme is attractive and easy to implement, it imposes serious stability conditions on the time-step-size, 
 \begin{equation}
 D\frac{dt}{dx^2}<\frac{1}{2},
 \end{equation} 
-where $D$ is the maximum diffusion coefficient in the compartment. For small $dx$, the required $dt$ for the method to work (stably) is usually prohibitive. Therefore, implicit schemes are usually adopted. Here we will a Crank-Nicholson scheme, which is second order accurate with respect to $dt$ and unconditionally stable, may be written as
+where $D$ is the maximum diffusion coefficient in all the compartments. For small $dx$, the required $dt$ for the method to work (stably) is usually prohibitive. Therefore, implicit schemes are usually adopted. Here we will a Crank-Nicholson scheme, which is second order accurate with respect to $dt$ and unconditionally stable, may be written as
 \begin{equation}
-\vec{M}^{k+1}=\vec{M}^k+\frac{dt}{2}A\left(\vec{M}^k+\,\vec{M}^{k+1}\right).
+\vec{M}^{m+1}=\vec{M}^m+\frac{dt}{2}A\left(\vec{M}^m+\,\vec{M}^{m+1}\right).
 \end{equation}
 
 In this implicit scheme we cannot obtain the approximation for time $t_{k+1}$ directly from values at time $t_k$, as we need to solve a linear system of equation at each time-step. The system is defined as follows
 \begin{equation}
-(I-\frac{dt}{2}A)\vec{M}^{k+1}=(I+\frac{dt}{2}A)\vec{M}^{k},
+(I-\frac{dt}{2}A)\vec{M}^{m+1}=(I+\frac{dt}{2}A)\vec{M}^{m},
 \end{equation}
 where $I$ is the $n\times n$ identity matrix. Since $A$ is tridiagonal, this system is very simple to solve with Gaussian Elimination.
 
@@ -366,7 +301,7 @@ It is convenient to work the theory in terms of mass, due to the conservation pr
 \begin{equation}
 \frac{d \vec{C}(t)}{dt}=A\vec{C}(t),
 \end{equation}
-where $\vec{C}(t)=[C_{1/2}(t), C_{3/2}(t), C_{5/2}(t), ..., C_{n-1/2}(t)]$. Therefore the same numerical method hold the concentrations.
+where $\vec{C}(t)=[C_{1/2}(t), C_{3/2}(t), C_{5/2}(t), ..., C_{n-1/2}(t)]$. Therefore the same numerical method hold for the concentrations.
 
 %% The Appendices part is started with the command \appendix;
 %% appendix sections are then done as normal sections
