@@ -1,9 +1,19 @@
+#-----------------------------------------
+# Main microextraction model library
+# P. Peixoto (ppeixoto@usp.br)
+#----------------------------------------
+
+#Libraries
 import numpy as np
 import scipy.sparse as sparse
 from scipy.sparse.linalg import spsolve
 import sys
+import os
+
+#Parameters file 
 import mex_params as params
 
+#Main class for device information
 class device:
     def __init__(self):
         self.header='''
@@ -14,7 +24,7 @@ class device:
         '''
         print(self.header)
         #----------------------------------
-        # Extraction mechanism parameters defined via param.py
+        # Extraction mechanism parameters defined via mex_param.py
         #----------------------------------
         self.D=params.D #diffusion coefficients
         self.K=params.K #partition coefficients
@@ -23,13 +33,22 @@ class device:
         self.ncomp=len(self.D) #number of compartments
         self.nparts=len(self.K) #number of interfaces
         self.domain_len=self.xspace[-1]-self.xspace[0] #Domain size
-
+        self.dir="output"
+        if not os.path.exists(self.dir):
+            os.makedirs(self.dir)
+        self.basename = params.name
+        self.basedir=self.dir+"/"+self.basename
+        if not os.path.exists(self.basedir):
+            os.makedirs(self.basedir)
+        
+        self.basename=self.basedir+"/"+self.basename
 
         print("You defined a mechanism with "+str(self.ncomp)+" compartment(s).")
         print("Mechanism layout/interfaces (x): ",self.xspace)
         print("Initial concentrations:", self.C)
         print("Diffusion coefficients:", self.D)
         print("Interface coefficients:", self.K)
+        print("Output basename:", self.basename)
         print()
 
         #Check dimensions
@@ -66,22 +85,22 @@ class device:
         self.ndf=self.N
         self.N=self.N+self.nparts #grid points, for plotting
         self.dx=(self.domain_len)/(self.N)
+        
+        self.x=np.linspace(self.xspace[0], self.xspace[-1], self.N, endpoint=True)
+        self.x=self.x[:-1]
+        
         print("Adjusted number of grid points: ", self.N)      
         print("Number of dregres of freedom: ", self.ndf)
         
-        #Define global matrix
+        #Define global tridiagonal matrix
         main  = np.ones(self.ndf)
         lower = np.ones(self.ndf-1)
         upper = np.ones(self.ndf-1)
 
-    
         #print(self.A.todense())
         for i, comp in enumerate(self.compart):
             comp.build_sys(main, lower, upper)
-        #print(self.A.todense())
-        #A=sparse.dia_matrix((main, 0), shape=(self.ndf, self.ndf))
-        #A=A+sparse.dia_matrix((lower, -1), shape=(self.ndf, self.ndf))
-
+        
         #Fill matrix with compartment information (pre-computation)
         self.A = sparse.diags(
             diagonals=[main, lower, upper],
@@ -91,14 +110,8 @@ class device:
         #print(self.A.todense())
         self.I=sparse.identity(self.ndf,  format='csr')
 
-        #self.A = sparse.diags(
-        #    diagonals=[main, lower, upper],
-        #    offsets=[0, -1, 1], shape=(self.ndf, self.ndf),
-        #    format='csr')
-
         #Fill initial conditions
         self.u = np.zeros(self.ndf)
-        
         for i, comp in enumerate(self.compart):            
             self.u[comp.ni:comp.ni+comp.n]=np.full(comp.n, self.C[i])
 
@@ -109,6 +122,7 @@ class device:
         
 
     def extend_u(self):
+        #Add information on boundary points
         self.uext = np.copy(self.u)
         extramass=0
         for i, comp in enumerate(self.compart):
@@ -122,27 +136,22 @@ class device:
                 self.uext = np.insert(self.uext, comp.ni+i, uinter)
             #print(self.uext)
         self.mass=self.dx*(np.sum(self.uext)+extramass)
-        return
-
-    def precomp(self, dt):
-        #Crank-nicolson matrices
-        self.Bplus=self.I+(0.5*dt)*self.A
-        self.Bminus=self.I-(0.5*dt)*self.A           
-        #print(self.Bplus.todense())
-        return
+        return self.uext
 
     def run_timestep(self, dt):
-        #dt=dt
-        b = self.Bplus.dot(self.u)
-        #self.u = self.u+dt*self.A.dot(self.u) #spsolve(self.Bminus, b)
-        self.u = spsolve(self.Bminus, b)
-        #self.uold=self.u
-        #print(self.Cold)
-        #print(dt*self.A.todense())
-        #print(dt*self.A.dot(self.Cold))
-        #print(self.Cold+dt*self.A.dot(self.Cold))
-        #sys.exit(1)
-        return self.u #self.Cold+dt*self.A.dot(self.Cold)
+        #Check if matrices pre-computed
+        try:
+            self.Bplus
+        except:
+            self.Bplus=self.I+(0.5*dt)*self.A
+            self.Bminus=self.I-(0.5*dt)*self.A    
+
+        #self.u = self.u+dt*self.A.dot(self.u) #Euler scheme
+        self.u = spsolve(self.Bminus, self.Bplus.dot(self.u)) #Crank-Nicolson
+        self.uold = self.u
+
+        self.extend_u()
+        return self.u 
 
 
     class compartment:
@@ -188,18 +197,6 @@ class device:
             else:
                 main[self.ni+self.n-1] = -(1/(self.dx*self.dx))*self.D[1]
 
-            #print(main, lower, upper)            
-            
-            #np.copy(-self.dif[0:-1]-self.dif[1:]) #1
-            #lower = np.copy(self.dif[1:-1]) #1
-            #upper = np.copy(lower)
-           
-            
-            #self.A=(1/self.dx*self.dx)*A
-            #print(self.A.todense())    
-
-            #Crankn-cholson matrices
-            #self.I=sparse.identity(n,  format='csr')
             
 
         

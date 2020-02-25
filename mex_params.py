@@ -1,6 +1,5 @@
-import numpy as np 
-
 #Micro extraction mechanism parameters
+import numpy as np 
 
 # All parameters must be adopted in the same units of space/time/mass/volume
 # here we adopt:
@@ -36,5 +35,11 @@ K=np.array([0.0, 2.0, 0.0]) # 2 boundaries and 1 interface coefficient, non-dime
 #Max time definition
 maxtime = 100*60 #10 minutes
 
+#Plotting time interval (every XX time units)
+iplot_time=10
+
 #Space discretization (number of grid points)
-N = 500
+N = 10
+
+#Experiment basename
+name = "microextraction"
