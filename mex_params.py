@@ -56,4 +56,4 @@ dt = 0.0001  #Seconds
 iplot_time=np.array([0.0, 3.0, 15.0, 30.0, 60.0])
 
 #Space discretization (number of grid points)
-N = 200
+N = 500
