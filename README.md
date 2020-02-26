@@ -27,5 +27,8 @@ Zhang, Z. and Pawliszyn, J., 1993. Headspace solid-phase microextraction. Analyt
 Execution
 --------------
 
+1) Edit parameters file: mex_params.py
+2) Run execution file: python model.py
+3) Outputs will be placed in output/ folder
 
 
