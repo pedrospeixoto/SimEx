@@ -30,6 +30,7 @@ class device:
         self.K=params.K #partition coefficients
         self.C=params.C #initial concentrations
         self.xspace=params.x #Mechanism domain and interfaces points
+        self.xnames=params.xnames
         self.ncomp=len(self.D) #number of compartments
         self.nparts=len(self.K) #number of interfaces
         self.domain_len=self.xspace[-1]-self.xspace[0] #Domain size
@@ -120,6 +121,22 @@ class device:
         #print(self.uext)
         self.uold=np.copy(self.u)
         
+        #Time definition
+        #Discretize time
+        self.T=params.maxtime
+        self.maxD = max(self.D)
+        self.dt = params.dt #0.1 #0.1*dx/maxD #0.25*dx*dx/maxD
+        self.Nt = int(self.T/self.dt)
+        self.time = np.linspace(0, self.T, self.Nt+1)
+        self.iplot=params.iplot_time
+        print()
+        print("Time-space info (dx, dt, Nt, maxD, dx/maxD):")
+        print(self.dx, self.dt, self.Nt, self.maxD, self.dx/self.maxD)
+        print()
+
+        #Precompute matrices
+        self.Bplus=self.I+(0.5*self.dt)*self.A
+        self.Bminus=self.I-(0.5*self.dt)*self.A    
 
     def extend_u(self):
         #Add information on boundary points
@@ -138,14 +155,7 @@ class device:
         self.mass=self.dx*(np.sum(self.uext)+extramass)
         return self.uext
 
-    def run_timestep(self, dt):
-        #Check if matrices pre-computed
-        try:
-            self.Bplus
-        except:
-            self.Bplus=self.I+(0.5*dt)*self.A
-            self.Bminus=self.I-(0.5*dt)*self.A    
-
+    def run_timestep(self):
         #self.u = self.u+dt*self.A.dot(self.u) #Euler scheme
         self.u = spsolve(self.Bminus, self.Bplus.dot(self.u)) #Crank-Nicolson
         self.uold = self.u

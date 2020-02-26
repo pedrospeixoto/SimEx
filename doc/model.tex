@@ -38,6 +38,8 @@
 %% The amssymb package provides various useful mathematical symbols
 \usepackage{amssymb}
 \usepackage{amsmath}
+\usepackage{hyperref}
+
 %% The amsthm package provides extended theorem environments
 %% \usepackage{amsthm}
 
@@ -46,7 +48,7 @@
 %% for the whole article with \linenumbers.
 %% \usepackage{lineno}
 
-\journal{To be defined}
+\journal{mextractmodel documentation}
 
 \begin{document}
 
@@ -158,12 +160,11 @@ where we note that the problem is therefore independent of $L_y$ and $L_z$. Also
 \left(D(x) \frac{\partial C(x,t)}{\partial x}\right), \quad x\in (0, L_x).
 \label{eq:dif_model}
 \end{equation}
-If $D(x)$ is independent of $x$, we arrive at the same familiar equation used in \citet{zhang1993headspace}. However, we will assume the media is anisotropic, so that the diffusivity is not constant, as actually happens in the microextraction devices at interfaces of compartments. By using the model proposed in \citet{zhang1993headspace}, compactly written as $C_t=DC_{xx}$, we can't, in general, expect local mass conservation of the system. However, with the slight change in the model, by considering the divergence of a flux term, as in equation \eqref{eq:dif_model}, the mass conservation is readily obtained in the interior of the compartment for non constant diffusion processes and we will also insure it at the compartment interfaces.
-
+If $D(x)$ is independent of $x$, we arrive at the same familiar equation used in \citet{zhang1993headspace}. However, we will assume the media is anisotropic, so that even when the diffusivity is not constant we will have mass conservation. By using the model proposed in \citet{zhang1993headspace}, compactly written as $C_t=DC_{xx}$, we can't, in general, expect local mass conservation of the system. 
 
 At the boundaries of the compartment ($x_0=0$ and $x_n=L_x$) we may enforce one of two boundary conditions of interest:
 \begin{enumerate}
-\item[(i)] A flux condition, defining an exact value of $J(x_0, t)$ or $J(x_n, t)$ for all times, also known as Neumann boundary condition. The interesting value for our problem is to set a no flux boundary conditions, which may be imposed by simply forcing $J(x_0, t)=0$ or $J(x_N, t)=0$, or, equivalently, that
+\item[(i)] A flux condition, defining an exact value of $J(x_0, t)$ or $J(x_n, t)$ for all times, also known as Neumann boundary condition. The interesting value for our problem is to set a no flux boundary conditions, which may be imposed by simply forcing $J(x_0, t)=0$ or $J(x_n, t)=0$, or, equivalently, that
 \begin{equation}
 \frac{\partial C(x_0,t)}{\partial x}=0, \quad \frac{\partial C(x_N,t)}{\partial x}=0.
 \end{equation}
@@ -183,7 +184,7 @@ which basically states that, in the limit, the outward flow of the compartment (
 
 Consider two compartments side by side, with no flux on the outer boundaries and an interface condition in between the compartments:
 \begin{itemize}
-\item Is the problem well posed for any $K$, $D_1$, $D_2$ and given initial conditions? 
+\item Is this continuous problem well posed for any $K$, $D_1$, $D_2$ and given initial conditions? 
 \item We know a steady state solution exists for this problem if the initial condition is constant on each side respecting the gap condition. But does the system allow existence of transient solution? Are they unique given the parameters?
 
 \end{itemize}
@@ -302,6 +303,16 @@ It is convenient to work the theory in terms of mass, due to the conservation pr
 \frac{d \vec{C}(t)}{dt}=A\vec{C}(t),
 \end{equation}
 where $\vec{C}(t)=[C_{1/2}(t), C_{3/2}(t), C_{5/2}(t), ..., C_{n-1/2}(t)]$. Therefore the same numerical method hold for the concentrations.
+
+\section{Code: mextractmodel}
+
+The numerical implementation, available via \url{https://github.com/pedrospeixoto/mextractmodel}, is divided into 3 main files:
+\begin{itemize}
+\item  \textbf{model.py} : Execution file (run with python model.py)
+\item \textbf{mex-params.py} : Model parameters, to be manually changed by the user
+\item \textbf{mextractmodel.py} : Main library for the microextraction model, to be imported where desired (for example in model.py)
+\end{itemize}
+
 
 %% The Appendices part is started with the command \appendix;
 %% appendix sections are then done as normal sections

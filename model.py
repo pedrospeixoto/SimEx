@@ -18,23 +18,13 @@ import mex_params as params
 #Setup compartments based on mex_params.py
 p=mex.device()
 
-#Discretize time
-T=params.maxtime
-maxD = max(p.D)
-dx = p.domain_len/p.N
-dt = 0.1 #0.1*dx/maxD #0.25*dx*dx/maxD
-Nt = int(T/dt)
-time = np.linspace(0, T, Nt+1)
-print("\nTime-space info (dx, dt, Nt, maxD, dx/maxD):\n", dx, dt, Nt, maxD, dx/maxD, "\n")
-iplot=params.iplot_time
-
 #Figure parameters
 fig, axes = plt.subplots(1,1, constrained_layout=True, figsize=(15,10))
 plt.xlabel("x-distance (cm)")
 plt.ylabel("Concentration ($\mu g/mL$)")
 plt.title("Microextration Model")
-for i, name in enumerate(params.xnames):
-    x=0.8*params.x[i]+0.2*params.x[i+1]
+for i, name in enumerate(p.xnames):
+    x=0.8*p.xspace[i]+0.2*p.xspace[i+1]
     plt.text(x, -0.1, name)
 
 #plt.pause(0.05)
@@ -42,13 +32,13 @@ for i, name in enumerate(params.xnames):
 
 
 #loop over time
-print("i    time     mass")
-for i, t in enumerate(time):    
+print("i    time  mass")
+for i, t in enumerate(p.time):    
 
     #Plot if required
     #if i%iplot == 0:
-    if t in iplot:
-        print(i,t, p.mass)
+    if t in p.iplot:
+        print(i, t, p.mass)
 
         #Plot
         axes.plot(p.x, p.uext, label=str(t)+"s")
@@ -58,7 +48,7 @@ for i, t in enumerate(time):
         #plt.pause(0.05)
 
     #Run time step
-    p.run_timestep(dt)
+    p.run_timestep()
 
 
 #plt.show()

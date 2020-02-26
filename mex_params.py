@@ -8,6 +8,11 @@ import numpy as np
 # - mass: micro-grams (mug)
 # - volume: cm^3 (mL)
 
+#Experiment basename
+#name = "test1"
+name = "microextraction_zhang1993_fig2"
+
+
 #Domain definition (position of interfaces) 
 # x=np.array([initial_position, interface_1, interface_2, final_position])
 #x=np.array([0, 1]) # cm
@@ -40,15 +45,15 @@ D=np.array([2.8e-6, 0.077, 1.8e-5]) # (cm^2/s) Zhang 1993 Fig 2
 #K=np.array([0.0, 2.0, 0.0]) # 2 boundaries and 1 interface coefficient, non-dimensional
 K=np.array([0.0, 50.0, 0.2, 0.0]) # Zhang 1993 Fig 2
 
-#Max time definition
+#Max time definition 
 maxtime = 10*60 #10 minutes
 maxtime = 60 #seconds
+
+#Time step size
+dt = 0.0001  #Seconds 
 
 #Plotting time spots
 iplot_time=np.array([0.0, 3.0, 15.0, 30.0, 60.0])
 
 #Space discretization (number of grid points)
-N = 1000
-
-#Experiment basename
-name = "microextraction_zhang1993_fig2"
+N = 200
