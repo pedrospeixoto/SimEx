@@ -47,10 +47,10 @@ K=np.array([0.0, 50.0, 0.2, 0.0]) # Zhang 1993 Fig 2
 
 #Max time definition 
 #maxtime = 10*60 #10 minutes
-maxtime = 60 #seconds
+maxtime = 120 #seconds
 
 #Time step size
-dt = 0.01  #Seconds 
+dt = 0.001  #Seconds 
 
 #Plotting time spots
 iplot_time=np.array([0.0, 3.0, 15.0, 30.0, 60.0, 120])
