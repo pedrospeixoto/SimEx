@@ -49,4 +49,5 @@ for i, t in enumerate(p.time):
 
 axes.plot(p.x, p.u_equi_ext, 'k--', label="Theoretical \n Equilibrium")
 axes.legend()
+plt.savefig(p.basename+"_final.png")
 plt.show()
