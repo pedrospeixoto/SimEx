@@ -28,7 +28,7 @@ for i, name in enumerate(p.xnames):
 #plt.ylim(bottom=-0.15) 
 
 #loop over time
-print("i    time  mass")
+print("\n i    time  mass")
 for i, t in enumerate(p.time):    
 
     #Plot if required
@@ -47,5 +47,6 @@ for i, t in enumerate(p.time):
     #Run time step
     p.run_timestep()
 
-
+axes.plot(p.x, p.u_equi_ext, 'k--', label="Theoretical \n Equilibrium")
+axes.legend()
 plt.show()

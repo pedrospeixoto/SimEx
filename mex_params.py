@@ -45,13 +45,12 @@ D=np.array([2.8e-6, 0.077, 1.8e-5]) # (cm^2/s) Zhang 1993 Fig 2
 #K=np.array([0.0, 2.0, 0.0]) # 2 boundaries and 1 interface coefficient, non-dimensional
 K=np.array([0.0, 50.0, 0.2, 0.0]) # Zhang 1993 Fig 2
 
-
 #Max time definition 
-maxtime = 10*60 #10 minutes
-maxtime = 120 #seconds
+#maxtime = 10*60 #10 minutes
+maxtime = 60 #seconds
 
 #Time step size
-dt = 0.001  #Seconds 
+dt = 0.01  #Seconds 
 
 #Plotting time spots
 iplot_time=np.array([0.0, 3.0, 15.0, 30.0, 60.0, 120])

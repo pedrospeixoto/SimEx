@@ -93,6 +93,7 @@ class device:
         print("Adjusted number of grid points: ", self.N)      
         print("Number of dregres of freedom: ", self.ndf)
         
+
         #Define global tridiagonal matrix
         main  = np.ones(self.ndf)
         lower = np.ones(self.ndf-1)
@@ -139,6 +140,9 @@ class device:
         self.Bminus=self.I-(0.5*self.dt)*self.A    
         #self.B=self.I-(self.dt)*self.A    
 
+        #Calculate equilibrium solution - reference
+        self.equilibrium()
+
     def extend_u(self):
         #Add information on boundary points
         self.uext = np.copy(self.u)
@@ -164,6 +168,56 @@ class device:
 
         self.extend_u()
         return self.u 
+
+    def equilibrium(self):
+        #Initial mass
+        Mini=0.0
+        K=np.copy(self.K)
+        K[0]=1.0
+        for i, c in enumerate(self.C):
+            dx=self.xspace[i+1]-self.xspace[i]
+            Mini=Mini+c*dx
+        self.Mini=Mini
+        #print("Initial Mass:", Mini)
+
+        #Final distribution on compart 0
+        a=0.0
+        for i in range(self.ncomp):
+            dx=self.xspace[i+1]-self.xspace[i]
+            Kprod=1.0
+            for k in K[0:i+1]:
+                Kprod=Kprod*k
+            a = a + dx/Kprod
+            #print(i, dx, Kprod, a)
+        C0=Mini/a
+
+        Cend = [C0]
+        for i in range(self.ncomp-1):
+            #print(i, K[i], K[i+1], Cend)
+            Cend.append(Cend[i]/K[i+1])
+        print("Equilibrium concentrations:", Cend)
+        self.Cend=Cend
+        Mend=0.0
+        for i, c in enumerate(Cend):
+            dx=self.xspace[i+1]-self.xspace[i]
+            Mend=Mend+c*dx
+
+        self.u_equi = np.zeros(self.ndf)
+        for i, comp in enumerate(self.compart):            
+            self.u_equi[comp.ni:comp.ni+comp.n]=np.full(comp.n, self.Cend[i])
+        
+        #Extend equilibrium 
+        self.u_equi_ext = np.copy(self.u_equi)
+        for i, comp in enumerate(self.compart):
+            #print(i, comp.n, comp.ni)
+            if comp.K[0]==0:
+                self.u_equi_ext = np.insert(self.u_equi_ext, comp.ni+i, self.u[comp.ni])
+            else :
+                uinter=(comp.D[1]/(comp.D[1]+comp.D[0]*comp.K[0]))*self.u[comp.ni]
+                uinter=uinter+(comp.D[0]/(comp.D[1]+comp.D[0]*comp.K[0]))*self.u[comp.ni-1]
+                self.u_equi_ext = np.insert(self.u_equi_ext, comp.ni+i, uinter)
+        #print("Final Mass:", Mend, Mend-Mini)
+
 
 
     class compartment:
