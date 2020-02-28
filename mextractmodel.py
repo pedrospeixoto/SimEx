@@ -137,6 +137,7 @@ class device:
         #Precompute matrices
         self.Bplus=self.I+(0.5*self.dt)*self.A
         self.Bminus=self.I-(0.5*self.dt)*self.A    
+        #self.B=self.I-(self.dt)*self.A    
 
     def extend_u(self):
         #Add information on boundary points
@@ -157,6 +158,7 @@ class device:
 
     def run_timestep(self):
         #self.u = self.u+dt*self.A.dot(self.u) #Euler scheme
+        #self.u = spsolve(self.B, self.u) #Implicit Euler
         self.u = spsolve(self.Bminus, self.Bplus.dot(self.u)) #Crank-Nicolson
         self.uold = self.u
 

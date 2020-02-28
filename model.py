@@ -12,9 +12,6 @@ plt.rcParams.update({'font.size': 18})
 #Main model file
 import mextractmodel as mex
 
-#Main parameters files
-import mex_params as params
-
 #Setup compartments based on mex_params.py
 p=mex.device()
 
@@ -27,9 +24,8 @@ for i, name in enumerate(p.xnames):
     x=0.8*p.xspace[i]+0.2*p.xspace[i+1]
     plt.text(x, -0.1, name)
 
-#plt.pause(0.05)
-#plt.show()
-
+#plt.ylim(bottom=-0.15) 
+#plt.ylim(bottom=-0.15) 
 
 #loop over time
 print("i    time  mass")
@@ -45,10 +41,11 @@ for i, t in enumerate(p.time):
         axes.legend()
         istr="{:07.0f}".format(t)
         plt.savefig(p.basename+"_"+istr+".png")
-        #plt.pause(0.05)
+        plt.pause(0.05)
+        np.savetxt(p.basename+"_"+istr+".csv", p.uext, delimiter=',')
 
     #Run time step
     p.run_timestep()
 
 
-#plt.show()
+plt.show()
