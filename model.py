@@ -4,7 +4,6 @@
 #Load libraries
 import numpy as np 
 import scipy as sp 
-import matplotlib as mpl
 import matplotlib.pyplot as plt
 import sys
 plt.rcParams.update({'font.size': 18})

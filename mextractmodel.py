@@ -10,12 +10,23 @@ from scipy.sparse.linalg import spsolve
 import sys
 import os
 
-#Parameters file 
+#Default parameters file 
 import mex_params as params
 
 #Main class for device information
 class device:
-    def __init__(self):
+    def __init__(self, \
+        D = params.D, \
+        K = params.K, \
+        C = params.C, \
+        xspace = params.x, \
+        xnames = params.xnames, \
+        name = params.name, \
+        N = params.N, \
+        dt = params.dt, \
+        maxtime = params.maxtime, \
+        iplot_time = params.iplot_time
+            ):
         self.header='''
         --------------------------------------------------------------
         Micro Extraction Diffusion Model
@@ -26,18 +37,19 @@ class device:
         #----------------------------------
         # Extraction mechanism parameters defined via mex_param.py
         #----------------------------------
-        self.D=params.D #diffusion coefficients
-        self.K=params.K #partition coefficients
-        self.C=params.C #initial concentrations
-        self.xspace=params.x #Mechanism domain and interfaces points
-        self.xnames=params.xnames
+        self.D = D #diffusion coefficients
+        self.K = K #partition coefficients
+        self.C = C #initial concentrations
+        self.xspace = xspace #Mechanism domain and interfaces points
+        self.xnames = xnames #Names of compartments
+
         self.ncomp=len(self.D) #number of compartments
         self.nparts=len(self.K) #number of interfaces
         self.domain_len=self.xspace[-1]-self.xspace[0] #Domain size
         self.dir="output"
         if not os.path.exists(self.dir):
             os.makedirs(self.dir)
-        self.basename = params.name
+        self.basename = name
         self.basedir=self.dir+"/"+self.basename
         if not os.path.exists(self.basedir):
             os.makedirs(self.basedir)
@@ -71,10 +83,10 @@ class device:
             Dloc=np.array([self.D[i-1],self.D[i], self.D[i+1]])
             Kloc=np.array([self.K[i-1],self.K[i]])
             xloc=np.array([self.xspace[i-1],self.xspace[i]])
-            self.compart.append( self.compartment(i-1, Dloc, Kloc, xloc))
+            self.compart.append( self.compartment(i-1, Dloc, Kloc, xloc, xnames[i-1]))
 
         #Discretize compartments and initialize the concentration on the grid
-        self.Ninit=params.N
+        self.Ninit=N
         print("Proposed number of control volumes (grid points): ", self.Ninit)
         self.N=0     
         for i, comp in enumerate(self.compart):
@@ -91,7 +103,7 @@ class device:
         self.x=self.x[:-1]
         
         print("Adjusted number of grid points: ", self.N)      
-        print("Number of dregres of freedom: ", self.ndf)
+        print("Number of dregrees of freedom: ", self.ndf)
         
 
         #Define global tridiagonal matrix
@@ -124,12 +136,12 @@ class device:
         
         #Time definition
         #Discretize time
-        self.T=params.maxtime
+        self.T=maxtime
         self.maxD = max(self.D)
-        self.dt = params.dt #0.1 #0.1*dx/maxD #0.25*dx*dx/maxD
+        self.dt = dt #0.1 #0.1*dx/maxD #0.25*dx*dx/maxD
         self.Nt = int(self.T/self.dt)
         self.time = np.linspace(0, self.T, self.Nt+1)
-        self.iplot=params.iplot_time
+        self.iplot=iplot_time
         print()
         print("Time-space info (dx, dt, Nt, maxD, dx/maxD):")
         print(self.dx, self.dt, self.Nt, self.maxD, self.dx/self.maxD)
@@ -142,6 +154,8 @@ class device:
 
         #Calculate equilibrium solution - reference
         self.equilibrium()
+        print("------------------------------------------------")
+        print()
 
     def extend_u(self):
         #Add information on boundary points
@@ -168,6 +182,28 @@ class device:
 
         self.extend_u()
         return self.u 
+
+    def run(self):
+
+        u_snapshots = []
+        for i, t in enumerate(self.time):    
+            #Save when required
+            #if i%iplot == 0:
+            if t in self.iplot:
+                print("Time: ", t, " Mass:", self.mass, " Iteration: ", i)
+
+                #Plot
+                u_snapshots.append(self.uext)
+                istr="{:07.0f}".format(t)
+                filename = self.basename+"_"+istr+".csv"
+                np.savetxt(filename, self.uext, delimiter=',')
+                print("  Saving snapshot at time "+istr+" with name: \n  ", filename)
+                #print(np.average(self.uext))
+
+            #Run time step
+            self.run_timestep()
+        
+        return u_snapshots
 
     def equilibrium(self):
         #Initial mass
@@ -222,16 +258,17 @@ class device:
 
     class compartment:
 
-        def __init__(self, i,  D, K, x):
+        def __init__(self, i,  D, K, x, name=""):
             self.icomp = i
             self.D=D
             self.K=K
             self.domain=x
             self.len=x[1]-x[0]
-            print("Compartment setup")
-            print("Local Domain:          ", x)
-            print("Difusion (neigbours):  ", D)
-            print("Border/Interfaces Coef:", K)
+            print("Compartment", i, " setup")
+            print(" Name:                  ", name)
+            print(" Local Domain:          ", x)
+            print(" Difusion (neigbours):  ", D)
+            print(" Border/Interfaces Coef:", K)
             print()
         
         def init_disc(self, n, ni):
