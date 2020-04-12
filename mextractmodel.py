@@ -153,6 +153,7 @@ class device:
         #self.B=self.I-(self.dt)*self.A    
 
         #Calculate equilibrium solution - reference
+        self.mass_war = True
         self.equilibrium()
         self.diff_to_eq(0.0)
 
@@ -174,6 +175,11 @@ class device:
                 self.uext = np.insert(self.uext, comp.ni+i, uinter)
             #print(self.uext)
         self.mass=self.dx*(np.sum(self.uext)+extramass)
+
+        if np.abs(self.mass - self.Mini ) > 0.001 and self.mass_war:
+            print("Warning: mass changes are large, it may be better to increase N and reduce dt ", self.mass, self.Mini)
+            self.mass_war = False
+
         return self.uext
 
     def diff_to_eq(self, time):
