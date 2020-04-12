@@ -19,7 +19,7 @@ class device:
         self.header='''
         --------------------------------------------------------------
         Micro Extraction Diffusion Model
-        Pedro S. Peixoto - University of São Paulo (ppeixoto@usp.br)
+        Pedro S. Peixoto - University of Sao Paulo (ppeixoto@usp.br)
         --------------------------------------------------------------
         '''
         print(self.header)
