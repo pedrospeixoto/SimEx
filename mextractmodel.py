@@ -174,10 +174,22 @@ class device:
         self.mass=self.dx*(np.sum(self.uext)+extramass)
         return self.uext
 
-    def diff_to_eq(self):
+    def diff_to_eq(self, time):
         self.eq_dif = self.u_equi - self.u
-        self.eq_dif_max_abs = np.max(self.eq_dif)
-        print(self.eq_dif_max_abs)
+        try:
+            self.eq_perc = self.eq_dif/self.u_equi
+        except:
+            print("Equilitrium has null values, can't calulate percent error")
+            sys.exit(1)
+
+        self.eq_dif_max_abs = np.max(np.abs(self.eq_dif))
+        self.eq_perc_max = np.max(np.abs(self.eq_perc))
+
+        for i in range(len(self.equi_percents)):
+            if self.eq_perc_max < np.abs(1-self.equi_percents[i]):
+                if time < self.equi_percents_times[i]:
+                    self.equi_percents_times[i]=time
+                    #print(self.eq_dif_max_abs, self.eq_perc_max, self.equi_percents, self.equi_percents_times)
 
     def run_timestep(self):
         #self.u = self.u+dt*self.A.dot(self.u) #Euler scheme
@@ -195,22 +207,39 @@ class device:
         for i, t in enumerate(self.time):    
             #Save when required
             #if i%iplot == 0:
+            self.diff_to_eq(t)
             if t in self.iplot:
-                print("Time: ", t, " Mass:", self.mass, " Iteration: ", i)
+                
+                mass_str = "{:.4f}".format(self.mass)
+                perc_str = "{:.4f}".format(self.eq_perc_max*100.0)
+                print(" It: ", i, " Time: ", t, " Mass: ", mass_str , " %Dif Eq: ", perc_str, "%" )
 
                 #Plot
                 u_snapshots.append(self.uext)
                 istr="{:07.0f}".format(t)
                 filename = self.basename+"_"+istr+".csv"
                 np.savetxt(filename, self.uext, delimiter=',')
-                print("  Saving snapshot at time "+istr+" with name: \n  ", filename)
+                #print("  Saving snapshot at time "+istr+" with name: \n  ", filename)
                 #print(np.average(self.uext))
 
             #Run time step
             self.run_timestep()
-            self.diff_to_eq()
+
+        self.print_output()
 
         return u_snapshots
+
+    def print_output(self):
+        print()
+        print(" %Eq   Time " )
+        for i in range(len(self.equi_percents)):
+            if self.equi_percents_times[i] > self.T : 
+                time = "Not reached"
+                print(self.equi_percents[i],"  ", time)
+            else:
+                time = "{:.2f}".format(self.equi_percents_times[i])
+                print(self.equi_percents[i],"  ",  time)
+        print()
 
     def equilibrium(self):
         #Initial mass
@@ -261,7 +290,9 @@ class device:
                 self.u_equi_ext = np.insert(self.u_equi_ext, comp.ni+i, uinter)
         #print("Final Mass:", Mend, Mend-Mini)
 
-
+        #Control with respect to equilibrium
+        self.equi_percents = [ 0.5, 0.6, 0.7, 0.8, 0.9, 0.95, 0.99] 
+        self.equi_percents_times = [9999999999.0]*len(self.equi_percents)
 
     class compartment:
 
