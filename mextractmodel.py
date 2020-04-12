@@ -174,6 +174,11 @@ class device:
         self.mass=self.dx*(np.sum(self.uext)+extramass)
         return self.uext
 
+    def diff_to_eq(self):
+        self.eq_dif = self.u_equi - self.u
+        self.eq_dif_max_abs = np.max(self.eq_dif)
+        print(self.eq_dif_max_abs)
+
     def run_timestep(self):
         #self.u = self.u+dt*self.A.dot(self.u) #Euler scheme
         #self.u = spsolve(self.B, self.u) #Implicit Euler
@@ -181,6 +186,7 @@ class device:
         self.uold = self.u
 
         self.extend_u()
+
         return self.u 
 
     def run(self):
@@ -202,7 +208,8 @@ class device:
 
             #Run time step
             self.run_timestep()
-        
+            self.diff_to_eq()
+
         return u_snapshots
 
     def equilibrium(self):
