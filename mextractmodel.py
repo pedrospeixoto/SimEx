@@ -103,7 +103,7 @@ class device:
         self.x=self.x[:-1]
         
         print("Adjusted number of grid points: ", self.N)      
-        print("Number of dregrees of freedom: ", self.ndf)
+        print("Number of degrees of freedom: ", self.ndf)
         
 
         #Define global tridiagonal matrix
@@ -154,6 +154,8 @@ class device:
 
         #Calculate equilibrium solution - reference
         self.equilibrium()
+        self.diff_to_eq(0.0)
+
         print("------------------------------------------------")
         print()
 
@@ -191,13 +193,14 @@ class device:
                     self.equi_percents_times[i]=time
                     #print(self.eq_dif_max_abs, self.eq_perc_max, self.equi_percents, self.equi_percents_times)
 
-    def run_timestep(self):
+    def run_timestep(self, t=0.0):
         #self.u = self.u+dt*self.A.dot(self.u) #Euler scheme
         #self.u = spsolve(self.B, self.u) #Implicit Euler
         self.u = spsolve(self.Bminus, self.Bplus.dot(self.u)) #Crank-Nicolson
         self.uold = self.u
 
         self.extend_u()
+        self.diff_to_eq(t)
 
         return self.u 
 
@@ -207,7 +210,6 @@ class device:
         for i, t in enumerate(self.time):    
             #Save when required
             #if i%iplot == 0:
-            self.diff_to_eq(t)
             if t in self.iplot:
                 
                 mass_str = "{:.4f}".format(self.mass)
@@ -223,7 +225,7 @@ class device:
                 #print(np.average(self.uext))
 
             #Run time step
-            self.run_timestep()
+            self.run_timestep(t=t)
 
         self.print_output()
 

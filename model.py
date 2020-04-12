@@ -44,7 +44,7 @@ for i, t in enumerate(p.time):
         np.savetxt(p.basename+"_"+istr+".csv", p.uext, delimiter=',')
 
     #Run time step
-    p.run_timestep()
+    p.run_timestep(t=t)
 
 axes.plot(p.x, p.u_equi_ext, 'k--', label="Theoretical \n Equilibrium")
 axes.legend()
