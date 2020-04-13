@@ -276,10 +276,10 @@ class device:
         for i in range(len(self.equi_percents)):
             if self.equi_percents_times[i] > self.T : 
                 time = "Not reached"
-                print(self.equi_percents[i],"  ", time)
+                print(self.equi_percents[i]*100,"%  ", time)
             else:
                 time = "{:.2f}".format(self.equi_percents_times[i])
-                print(self.equi_percents[i],"  ",  time)
+                print(self.equi_percents[i]*100,"%  ",  time)
         print()
 
     def equilibrium(self):
