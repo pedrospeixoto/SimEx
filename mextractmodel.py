@@ -4,11 +4,12 @@
 #----------------------------------------
 
 #Libraries
+import sys
+import os
+
 import numpy as np
 import scipy.sparse as sparse
 from scipy.sparse.linalg import spsolve
-import sys
-import os
 
 #Default parameters file 
 import mex_params as params
@@ -25,8 +26,8 @@ class device:
         N = params.N, \
         dt = params.dt, \
         maxtime = params.maxtime, \
-        iplot_time = params.iplot_time
-            ):
+        iplot_time = params.iplot_time ):
+
         self.header='''
         --------------------------------------------------------------
         Micro Extraction Diffusion Model
@@ -46,6 +47,8 @@ class device:
         self.ncomp=len(self.D) #number of compartments
         self.nparts=len(self.K) #number of interfaces
         self.domain_len=self.xspace[-1]-self.xspace[0] #Domain size
+
+        #output directory settings
         self.dir="output"
         if not os.path.exists(self.dir):
             os.makedirs(self.dir)
@@ -80,32 +83,31 @@ class device:
         self.compart = []
         for i in range(1, self.ncomp+1):
             #Initialize compartment
-            Dloc=np.array([self.D[i-1],self.D[i], self.D[i+1]])
-            Kloc=np.array([self.K[i-1],self.K[i]])
-            xloc=np.array([self.xspace[i-1],self.xspace[i]])
+            Dloc = np.array([self.D[i-1],self.D[i], self.D[i+1]])
+            Kloc = np.array([self.K[i-1],self.K[i]])
+            xloc = np.array([self.xspace[i-1],self.xspace[i]])
             self.compart.append( self.compartment(i-1, Dloc, Kloc, xloc, xnames[i-1]))
 
         #Discretize compartments and initialize the concentration on the grid
-        self.Ninit=N
+        self.Ninit = N
         print("Proposed number of control volumes (grid points): ", self.Ninit)
-        self.N=0     
+        self.N = 0     
         for i, comp in enumerate(self.compart):
-            ni=self.N
-            n=int(self.Ninit*(comp.len/self.domain_len))-1
+            ni = self.N
+            n = int(self.Ninit*(comp.len/self.domain_len))-1
             comp.init_disc(n, ni) #configure 
-            self.N=self.N+comp.n
-            print("Compart: ", comp.icomp, " ini_index:", comp.ni, " deg_free",  comp.n)    
-        self.ndf=self.N
-        self.N=self.N+self.nparts #grid points, for plotting
-        self.dx=(self.domain_len)/(self.N)
+            self.N = self.N + comp.n
+            #print("Compart: ", comp.icomp, " ini_index:", comp.ni, " deg_free",  comp.n)    
+        self.ndf = self.N
+        self.N = self.N+self.nparts #grid points, for plotting
+        self.dx = (self.domain_len)/(self.N)
         
         self.x=np.linspace(self.xspace[0], self.xspace[-1], self.N, endpoint=True)
-        self.x=self.x[:-1]
+        #self.x=self.x[:-1]
         
         print("Adjusted number of grid points: ", self.N)      
         print("Number of degrees of freedom: ", self.ndf)
         
-
         #Define global tridiagonal matrix
         main  = np.ones(self.ndf)
         lower = np.ones(self.ndf-1)
@@ -129,38 +131,40 @@ class device:
         for i, comp in enumerate(self.compart):            
             self.u[comp.ni:comp.ni+comp.n]=np.full(comp.n, self.C[i])
 
-        #print(self.u)
-        self.extend_u()
-        #print(self.uext)
-        self.uold=np.copy(self.u)
-        
+        #Extend solution to interfaces and endpoints
+        #self.extend_u()
+        self.uext, self.mass = self.extend(self.u)
+        self.mass_war = True
+        self.mass_ini = self.mass
+
         #Time definition
         #Discretize time
-        self.T=maxtime
+        self.T = maxtime
         self.maxD = max(self.D)
         self.dt = dt #0.1 #0.1*dx/maxD #0.25*dx*dx/maxD
         self.Nt = int(self.T/self.dt)
         self.time = np.linspace(0, self.T, self.Nt+1)
-        self.iplot=iplot_time
+        self.iplot = iplot_time
         print()
         print("Time-space info (dx, dt, Nt, maxD, dx/maxD):")
         print(self.dx, self.dt, self.Nt, self.maxD, self.dx/self.maxD)
         print()
 
-        #Precompute matrices
-        self.Bplus=self.I+(0.5*self.dt)*self.A
-        self.Bminus=self.I-(0.5*self.dt)*self.A    
-        #self.B=self.I-(self.dt)*self.A    
 
         #Calculate equilibrium solution - reference
-        self.mass_war = True
         self.equilibrium()
         self.diff_to_eq(0.0)
+        
+        #Precompute matrices
+        self.Bplus = self.I+(0.5*self.dt)*self.A
+        self.Bminus = self.I-(0.5*self.dt)*self.A    
+        #self.B=self.I-(self.dt)*self.A    
 
         print("------------------------------------------------")
         print()
 
     def extend_u(self):
+
         #Add information on boundary points
         self.uext = np.copy(self.u)
         extramass=0
@@ -169,20 +173,42 @@ class device:
             if comp.K[0]==0:
                 self.uext = np.insert(self.uext, comp.ni+i, self.u[comp.ni])
             else :
-                uinter=(comp.D[1]/(comp.D[1]+comp.D[0]*comp.K[0]))*self.u[comp.ni]
-                uinter=uinter+(comp.D[0]/(comp.D[1]+comp.D[0]*comp.K[0]))*self.u[comp.ni-1]
-                extramass=extramass+uinter*comp.K[0]
+                uinter = (comp.D[1]/(comp.D[1]+comp.D[0]*comp.K[0]))*self.u[comp.ni]
+                uinter = uinter + (comp.D[0]/(comp.D[1]+comp.D[0]*comp.K[0]))*self.u[comp.ni-1]
+                extramass = extramass + uinter*comp.K[0]
                 self.uext = np.insert(self.uext, comp.ni+i, uinter)
             #print(self.uext)
+        #self.mass=self.dx*(np.sum(self.uext)+extramass)
         self.mass=self.dx*(np.sum(self.uext)+extramass)
-
-        if np.abs(self.mass - self.Mini ) > 0.001 and self.mass_war:
-            print("Warning: mass changes are large, it may be better to increase N and reduce dt ", self.mass, self.Mini)
-            self.mass_war = False
 
         return self.uext
 
+    def extend(self, u):
+
+        #Add information on boundary points
+        uext = np.copy(u)
+        extramass=0
+        for i, comp in enumerate(self.compart):
+            #print(i, comp.n, comp.ni)
+            if comp.K[0]==0:
+                uext = np.insert(uext, comp.ni+i, u[comp.ni])
+            else :
+                uinter = (comp.D[1]/(comp.D[1]+comp.D[0]*comp.K[0]))*u[comp.ni]
+                uinter = uinter + (comp.D[0]/(comp.D[1]+comp.D[0]*comp.K[0]))*u[comp.ni-1]
+                extramass = extramass + uinter*comp.K[0]
+                uext = np.insert(uext, comp.ni+i, uinter)
+            #print(self.uext)
+        #self.mass=self.dx*(np.sum(self.uext)+extramass)
+        #add last point
+        uext = np.append(uext, uext[-1])
+        mass=self.dx*(np.sum(uext)+extramass)
+        
+
+        return uext, mass
+
     def diff_to_eq(self, time):
+        #Calculates the diffence in the solution to the equilibrium
+
         self.eq_dif = self.u_equi - self.u
         try:
             self.eq_perc = self.eq_dif/self.u_equi
@@ -193,21 +219,28 @@ class device:
         self.eq_dif_max_abs = np.max(np.abs(self.eq_dif))
         self.eq_perc_max = np.max(np.abs(self.eq_perc))
 
+        #Collect time when it reaches a certain percent of equilibrium
         for i in range(len(self.equi_percents)):
             if self.eq_perc_max < np.abs(1-self.equi_percents[i]):
                 if time < self.equi_percents_times[i]:
                     self.equi_percents_times[i]=time
                     #print(self.eq_dif_max_abs, self.eq_perc_max, self.equi_percents, self.equi_percents_times)
 
+        #Check if mass is not changing much
+        delta_mass = np.abs(self.mass - self.mass_ini )/self.mass_ini
+        if delta_mass > 0.01 and self.mass_war:
+            print("Warning: mass changes are large, it may be better to increase N and reduce dt ", self.mass, self.mass_ini, delta_mass)
+            self.mass_war = False #only give 1 warning
+
     def run_timestep(self, t=0.0):
         #self.u = self.u+dt*self.A.dot(self.u) #Euler scheme
         #self.u = spsolve(self.B, self.u) #Implicit Euler
         self.u = spsolve(self.Bminus, self.Bplus.dot(self.u)) #Crank-Nicolson
-        self.uold = self.u
 
-        self.extend_u()
+        #self.extend_u()
+        self.uext, self.mass = self.extend(self.u)
         self.diff_to_eq(t)
-
+        
         return self.u 
 
     def run(self):
@@ -250,6 +283,8 @@ class device:
         print()
 
     def equilibrium(self):
+        #Calculate equilibrium solution
+
         #Initial mass
         Mini=0.0
         K=np.copy(self.K)
@@ -258,7 +293,7 @@ class device:
             dx=self.xspace[i+1]-self.xspace[i]
             Mini=Mini+c*dx
         self.Mini=Mini
-        #print("Initial Mass:", Mini)
+        #print("Initial Mass:", Mini, np.sum(self.uext)*self.dx, self.mass)
 
         #Final distribution on compart 0
         a=0.0
@@ -275,7 +310,7 @@ class device:
         for i in range(self.ncomp-1):
             #print(i, K[i], K[i+1], Cend)
             Cend.append(Cend[i]/K[i+1])
-        print("Equilibrium concentrations:", Cend)
+        print("Equilibrium concentrations:\n", Cend)
         self.Cend=Cend
         Mend=0.0
         for i, c in enumerate(Cend):
@@ -286,20 +321,10 @@ class device:
         for i, comp in enumerate(self.compart):            
             self.u_equi[comp.ni:comp.ni+comp.n]=np.full(comp.n, self.Cend[i])
         
-        #Extend equilibrium 
-        self.u_equi_ext = np.copy(self.u_equi)
-        for i, comp in enumerate(self.compart):
-            #print(i, comp.n, comp.ni)
-            if comp.K[0]==0:
-                self.u_equi_ext = np.insert(self.u_equi_ext, comp.ni+i, self.u[comp.ni])
-            else :
-                uinter=(comp.D[1]/(comp.D[1]+comp.D[0]*comp.K[0]))*self.u[comp.ni]
-                uinter=uinter+(comp.D[0]/(comp.D[1]+comp.D[0]*comp.K[0]))*self.u[comp.ni-1]
-                self.u_equi_ext = np.insert(self.u_equi_ext, comp.ni+i, uinter)
-        #print("Final Mass:", Mend, Mend-Mini)
-
-        #Control with respect to equilibrium
-        self.equi_percents = [ 0.5, 0.6, 0.7, 0.8, 0.9, 0.95, 0.99] 
+        self.u_equi_ext, self.mass_equi = self.extend(self.u_equi)
+        
+        #Control solution with respect to equilibrium
+        self.equi_percents = [ 0.5, 0.6, 0.7, 0.8, 0.9, 0.95, 0.99, 0.995] 
         self.equi_percents_times = [9999999999.0]*len(self.equi_percents)
 
     class compartment:
