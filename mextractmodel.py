@@ -10,6 +10,7 @@ import os
 import numpy as np
 import scipy.sparse as sparse
 from scipy.sparse.linalg import spsolve
+import pandas as pd
 
 #Default parameters file 
 import mex_params as params
@@ -244,8 +245,10 @@ class device:
         return self.u 
 
     def run(self):
-
+        
         u_snapshots = []
+        u_df = pd.DataFrame()
+        u_df["x"] = self.x
         for i, t in enumerate(self.time):    
             #Save when required
             #if i%iplot == 0:
@@ -256,8 +259,9 @@ class device:
                 print(" It: ", i, " Time: ", t, " Mass: ", mass_str , " %Dif Eq: ", perc_str, "%" )
 
                 #Plot
-                u_snapshots.append(self.uext)
+                u_snapshots.append(self.uext)                 
                 istr="{:07.0f}".format(t)
+                u_df["t"+istr] = self.uext
                 filename = self.basename+"_"+istr+".csv"
                 np.savetxt(filename, self.uext, delimiter=',')
                 #print("  Saving snapshot at time "+istr+" with name: \n  ", filename)
@@ -266,6 +270,10 @@ class device:
             #Run time step
             self.run_timestep(t=t)
 
+        #Save full matrix to file
+        filename = self.basename+"_data.csv"
+        print(" Saving data file with all times as ", filename)
+        u_df.to_csv(filename)
         self.print_output()
 
         return u_snapshots
