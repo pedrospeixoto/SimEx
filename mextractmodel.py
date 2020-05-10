@@ -272,7 +272,7 @@ class device:
 
         #Save full matrix to file
         filename = self.basename+"_data.csv"
-        print(" Saving data file with all times as ", filename)
+        print(" \n Saving concentrations as \n ", filename)
         u_df.to_csv(filename)
         self.print_output()
 
