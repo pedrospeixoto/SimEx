@@ -15,6 +15,11 @@ Zhang, Z. and Pawliszyn, J., 1993. Headspace solid-phase microextraction. Analyt
 --------------
  Installation
 --------------
+0) You can use the code without installing it via binder:
+
+https://mybinder.org/v2/gh/pedrospeixoto/mextractmodel/master?filepath=model.ipynb
+
+or else,
 
 1) Install python-3.8.1
 
@@ -22,6 +27,7 @@ Zhang, Z. and Pawliszyn, J., 1993. Headspace solid-phase microextraction. Analyt
 - numpy
 - scipy
 - matplotlib
+- pandas
 
 --------------
 Execution
