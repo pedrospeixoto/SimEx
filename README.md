@@ -24,7 +24,7 @@ https://mybinder.org/v2/gh/pedrospeixoto/mextractmodel/master?filepath=model.ipy
 - Especific examples in the examples folder from here:
 https://mybinder.org/v2/gh/pedrospeixoto/mextractmodel/master
 
-**Run locally on your computer: **
+**Run locally on your computer:**
 
 1) Install python-3.8.x or higher
 
