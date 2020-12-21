@@ -17,11 +17,15 @@ Zhang, Z. and Pawliszyn, J., 1993. Headspace solid-phase microextraction. Analyt
 --------------
 0) You can use the code without installing it via binder:
 
+A generic example:
 https://mybinder.org/v2/gh/pedrospeixoto/mextractmodel/master?filepath=model.ipynb
 
-or else,
+Especific examples in the examples folder from here:
+https://mybinder.org/v2/gh/pedrospeixoto/mextractmodel/master
 
-1) Install python-3.8.1
+or you can run locally on your computer,
+
+1) Install python-3.8.x or higher
 
 2) Install required python packages (pip install pkgname):
 - numpy
@@ -33,8 +37,16 @@ or else,
 Execution
 --------------
 
+- With Jupyter-notebook:
+1) Copy one of the notebook examples (e.g. model.ipynb -> mymodel.ipynb)
+2) Open the notebook with jupyter-notebook 
+3) Edit the parameters in the notebook and run the cells.
+4) Outputs will be placed in an output/ folder
+
+- With a parameter file:
 1) Edit parameters file: mex_params.py
 2) Run execution file: python model.py
-3) Outputs will be placed in output/ folder
+3) Outputs will be placed in an output/ folder
+
 
 
