@@ -4,7 +4,7 @@
 Micro Extraction Diffusion Model
 --------------
 
-A robust and general numerical model for gas-diffusion micro extraction mechamisms based on one dimensional diffusion differential equations.
+A robust and general numerical model to simulate closed system extraction processes for analytical purposes based on one dimensional diffusion differential equations.
 
 Main developer:
 Pedro S. Peixoto - University of São Paulo (ppeixoto@usp.br)
@@ -17,10 +17,10 @@ Zhang, Z. and Pawliszyn, J., 1993. Headspace solid-phase microextraction. Analyt
 --------------
 0) You can use the code without installing it via binder:
 
-A generic example:
+- A generic example:
 https://mybinder.org/v2/gh/pedrospeixoto/mextractmodel/master?filepath=model.ipynb
 
-Especific examples in the examples folder from here:
+- Especific examples in the examples folder from here:
 https://mybinder.org/v2/gh/pedrospeixoto/mextractmodel/master
 
 or you can run locally on your computer,
@@ -32,6 +32,8 @@ or you can run locally on your computer,
 - scipy
 - matplotlib
 - pandas
+
+3) git clone the repository (or download the repository files).
 
 --------------
 Execution
