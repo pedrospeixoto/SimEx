@@ -13,7 +13,7 @@ from scipy.sparse.linalg import spsolve
 import pandas as pd
 
 #Default parameters file 
-import mex_params as params
+import mex_default_params as params
 
 #Main class for device information
 class device:

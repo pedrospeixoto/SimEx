@@ -1,4 +1,7 @@
 #Micro extraction mechanism parameters
+#
+# These dafult parameters are based on zhang1993, Figure 2
+#-------------------------------------------------------
 import numpy as np 
 
 # All parameters must be adopted in the same units of space/time/mass/volume
