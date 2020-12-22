@@ -1,7 +1,7 @@
 # mextractmodel
 
 --------------
-Micro Extraction Diffusion Model
+Extraction Diffusion Model
 --------------
 
 A robust and general numerical model to simulate closed system extraction processes for analytical purposes based on one dimensional diffusion differential equations.
