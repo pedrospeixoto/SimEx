@@ -91,7 +91,16 @@ class device:
 
         #Discretize compartments and initialize the concentration on the grid
         self.Ninit = N
-        print("Proposed number of control volumes (grid points): ", self.Ninit)
+        print("Proposed number of control volumes (grid points): ", N)
+
+        #check for adequate spatial resolution
+        for i, comp in enumerate(self.compart):
+            n = int(self.Ninit*(comp.len/self.domain_len))-1
+            if n < 4 :
+                self.Ninit = int(6*self.domain_len/comp.len)  
+                print("Warning: resolution not enough for this ", comp.name, " compartment - Incresing total resolution!", self.Ninit)
+                print("    Be aware that high resolution runs can take longer and use more memory!")
+
         self.N = 0     
         for i, comp in enumerate(self.compart):
             ni = self.N
@@ -143,6 +152,16 @@ class device:
         self.T = maxtime
         self.maxD = max(self.D)
         self.dt = dt #0.1 #0.1*dx/maxD #0.25*dx*dx/maxD
+
+        print()
+        #Check if time discretization is fine enough
+        
+        
+        dtdx_rel = self.dt*self.maxD/self.dx
+        if dtdx_rel > 100:    
+            print("Warning: reducing timestep size, as it seems to large for this resolution (rel, dt, dx)", dtdx_rel, self.dt, self.dx)
+            self.dt = 100*self.dx/self.maxD
+
         self.Nt = int(self.T/self.dt)
         self.time = np.linspace(0, self.T, self.Nt+1)
         self.iplot = iplot_time
@@ -343,6 +362,7 @@ class device:
             self.K=K
             self.domain=x
             self.len=x[1]-x[0]
+            self.name=name
             print("Compartment", i, " setup")
             print(" Name:                  ", name)
             print(" Local Domain:          ", x)

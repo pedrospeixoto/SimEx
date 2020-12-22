@@ -23,6 +23,7 @@ name = "microextraction_zhang1993_fig2"
 # |----|----|
 #x=np.array([0, 0.5, 1]) # cm
 x=np.array([0, 0.0056, 0.07, 0.1]) # cm Zhang 1993 Fig 2
+#x=np.array([0, 0.0056, 0.07, 0.07001]) # cm fine grid example
 
 #Names of compartments
 #xnames = ["", "", ""]
