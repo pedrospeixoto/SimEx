@@ -1,6 +1,6 @@
 # SimExtract
 
-------------------
+
 Simulation of extraction processes
 ------------------
 
