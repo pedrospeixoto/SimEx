@@ -1,6 +1,6 @@
 # SimExtract
 
-----------------
+------------------
 Simulation of extraction processes
 ------------------
 
@@ -9,8 +9,8 @@ Model for the extraction of volatile and semi-volatile compounds based on numeri
 A robust and general numerical model to simulate closed system extraction processes for analytical purposes based on one dimensional diffusion differential equations.
 
 Main developers:
-Pedro S. Peixoto - University of São Paulo (ppeixoto@usp.br)
-Luís Moreira Gonçalves - University of São Paulo (lmgoncalves@iq.usp.br)
+- Pedro S. Peixoto - University of São Paulo (ppeixoto@usp.br)
+- Luís Moreira Gonçalves - University of São Paulo (lmgoncalves@iq.usp.br)
 
 The software is freely provided without restriction for general purpose usage. Please cite the software as:
 - (TODO)
