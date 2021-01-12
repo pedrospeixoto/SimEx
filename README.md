@@ -24,10 +24,10 @@ Suggestions for improvements can be mailed to developers and are more than welco
 **Use the code without installing it, via binder:**
 
 - A generic example:
-https://mybinder.org/v2/gh/pedrospeixoto/mextractmodel/master?filepath=model.ipynb
+https://mybinder.org/v2/gh/pedrospeixoto/SimExtract/master?filepath=model.ipynb
 
 - Especific examples in the examples folder from here:
-https://mybinder.org/v2/gh/pedrospeixoto/mextractmodel/master
+https://mybinder.org/v2/gh/pedrospeixoto/SimExtract/master
 
 **Run locally on your computer:**
 
