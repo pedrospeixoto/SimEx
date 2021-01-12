@@ -27,7 +27,7 @@ Suggestions for improvements can be mailed to developers and are more than welco
 
 
 - A generic example:
-https://mybinder.org/v2/gh/pedrospeixoto/SimExtract/master?filepath=model.ipynb
+https://mybinder.org/v2/gh/pedrospeixoto/SimExtract/master?filepath=simex_example.ipynb
 
 - Especific examples in the examples folder from here:
 https://mybinder.org/v2/gh/pedrospeixoto/SimExtract/master
