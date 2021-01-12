@@ -21,7 +21,10 @@ Suggestions for improvements can be mailed to developers and are more than welco
  Installation
 --------------
 
-**Use the code without installing it, via binder:**
+**Use the code without installing it, via binder:** 
+
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/pedrospeixoto/SimExtract/HEAD)
+
 
 - A generic example:
 https://mybinder.org/v2/gh/pedrospeixoto/SimExtract/master?filepath=model.ipynb
