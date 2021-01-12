@@ -1,19 +1,20 @@
 #-----------------------------------------
-# Main microextraction model library
-# P. Peixoto (ppeixoto@usp.br)
+# Main SimExtraction library
+# Main Author: P. Peixoto (ppeixoto@usp.br) 
 #----------------------------------------
 
 #Libraries
 import sys
 import os
 
-import numpy as np
-import scipy.sparse as sparse
-from scipy.sparse.linalg import spsolve
-import pandas as pd
+#Dependencies
+import numpy as np                 # Required for linear algebra basics
+import scipy.sparse as sparse      #Required for basic sparse matriz functions
+from scipy.sparse.linalg import spsolve #Required to solve linear systems
+import pandas as pd                #This is just used to save the results in a nice format
 
 #Default parameters file 
-import mex_default_params as params
+import simex_params as params
 
 #Main class for device information
 class device:
@@ -31,8 +32,7 @@ class device:
 
         self.header='''
         --------------------------------------------------------------
-        Micro Extraction Diffusion Model
-        Pedro S. Peixoto - University of Sao Paulo (ppeixoto@usp.br)
+        Simex - Simulation of Extraction Processes
         --------------------------------------------------------------
         '''
         print(self.header)
@@ -60,7 +60,7 @@ class device:
         
         self.basename=self.basedir+"/"+self.basename
 
-        print("You defined a mechanism with "+str(self.ncomp)+" compartment(s).")
+        print("You defined a device with "+str(self.ncomp)+" compartment(s).")
         print("Mechanism layout/interfaces (x): ",self.xspace)
         print("Initial concentrations:", self.C)
         print("Diffusion coefficients:", self.D)
@@ -159,7 +159,7 @@ class device:
         
         dtdx_rel = self.dt*self.maxD/self.dx
         if dtdx_rel > 100:    
-            print("Warning: reducing timestep size, as it seems to large for this resolution (rel, dt, dx)", dtdx_rel, self.dt, self.dx)
+            print("Warning: reducing timestep size, as it seems too large for this resolution (rel, dt, dx)", dtdx_rel, self.dt, self.dx)
             self.dt = 100*self.dx/self.maxD
 
         self.Nt = int(self.T/self.dt)
@@ -248,8 +248,9 @@ class device:
 
         #Check if mass is not changing much
         delta_mass = np.abs(self.mass - self.mass_ini )/self.mass_ini
-        if delta_mass > 0.01 and self.mass_war:
-            print("Warning: mass changes are large, it may be better to increase N and reduce dt ", self.mass, self.mass_ini, delta_mass)
+        if delta_mass > 0.05 and self.mass_war:
+            print("  Warning: mass changes in one timestep are large, it may be better to increase N and reduce dt?")
+            print("  Initial mass: ", self.mass, "\n Current mass: ", self.mass_ini, "\n Mass variation: ", delta_mass)
             self.mass_war = False #only give 1 warning
 
     def run_timestep(self, t=0.0):
@@ -273,7 +274,7 @@ class device:
             #if i%iplot == 0:
             if t in self.iplot:
                 
-                mass_str = "{:.4f}".format(self.mass)
+                mass_str = "{:.5f}".format(self.mass)
                 perc_str = "{:.4f}".format(self.eq_perc_max*100.0)
                 print(" It: ", i, " Time: ", t, " Mass: ", mass_str , " %Dif Eq: ", perc_str, "%" )
 

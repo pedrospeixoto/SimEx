@@ -1,19 +1,21 @@
-#Micro extraction mechanism parameters
+# SimExtract Default Parameters
 #
-# These dafult parameters are based on zhang1993, Figure 2
+# Simulate extraction mechanism parameters
+#
+# These default parameters are based on zhang1993, Figure 2
 #-------------------------------------------------------
 import numpy as np 
 
-# All parameters must be adopted in the same units of space/time/mass/volume
-# here we adopt:
-# - space units: "cm" 
-# - time units: "seconds" (s)
-# - mass: micro-grams (mug)
-# - volume: cm^3 (mL)
+#All parameters must be adopted in the same units of space/time/mass/volume
+#here we adopt:
+#- space units: centimeters (cm) 
+#- time units: seconds (s)
+#- mass: Micrograms (mug)
+#- volume: cubic-centimeters or milliliters (cm^3, mL)
 
-#Experiment basename
+#Experiment basename (for output filenames)
 #name = "test1"
-name = "microextraction_zhang1993_fig2"
+name = "simex_example_zhang1993_fig2"
 
 
 #Domain definition (position of interfaces) 

@@ -1,5 +1,8 @@
-#Micro extraction model 
+#Micro extraction model simulation run example
+# 
 # Pedro Peixoto (ppeixoto@usp.br)
+#
+# Reproduces zhang1993, Figure 2
 
 #Load libraries
 import numpy as np 
@@ -9,10 +12,10 @@ import sys
 plt.rcParams.update({'font.size': 18})
 
 #Main model file
-import mextractmodel as mex
+import simex_lib as simex
 
 #Setup compartments based on mex_params.py
-p=mex.device()
+p=simex.device()
 
 #Figure parameters
 fig, axes = plt.subplots(1,1, constrained_layout=True, figsize=(15,10))
@@ -20,8 +23,8 @@ plt.xlabel("x-distance (cm)")
 plt.ylabel("Concentration ($\mu g/mL$)")
 plt.title("Microextration Model")
 for i, name in enumerate(p.xnames):
-    x=0.8*p.xspace[i]+0.2*p.xspace[i+1]
-    plt.text(x, -0.1, name)
+    xlab=0.8*p.xspace[i]+0.2*p.xspace[i+1]
+    plt.text(xlab, -0.1, name)
 
 #plt.ylim(bottom=-0.15) 
 #plt.ylim(bottom=-0.15) 
