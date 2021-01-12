@@ -49,14 +49,14 @@ Execution
 --------------
 
 **With Jupyter-notebook:**
-1) Copy one of the notebook examples (e.g. model.ipynb -> mymodel.ipynb)
+1) Copy one of the notebook examples (e.g. simex_example.ipynb -> mysimex_example.ipynb)
 2) Open the notebook with jupyter-notebook 
 3) Edit the parameters in the notebook and run the cells.
 4) Outputs will be placed in an output/ folder
 
 **With a parameter file:**
-1) Edit parameters file: mex_params.py
-2) Run execution file: python model.py
+1) Edit parameters file: simex_params.py
+2) Run execution file: python simex_run.py
 3) Outputs will be placed in an output/ folder
 
 
