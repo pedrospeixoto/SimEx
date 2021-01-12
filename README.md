@@ -23,14 +23,9 @@ Suggestions for improvements can be mailed to developers and are more than welco
 
 **Use the code without installing it, via binder:** 
 
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/pedrospeixoto/SimExtract/HEAD)
+- A generic example: [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/pedrospeixoto/SimExtract/HEAD?filepath=simex_example.ipynb)
 
-
-- A generic example:
-https://mybinder.org/v2/gh/pedrospeixoto/SimExtract/master?filepath=simex_example.ipynb
-
-- Especific examples in the examples folder from here:
-https://mybinder.org/v2/gh/pedrospeixoto/SimExtract/master
+- Especific examples in the examples folder from here: [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/pedrospeixoto/SimExtract/HEAD)
 
 **Run locally on your computer:**
 
