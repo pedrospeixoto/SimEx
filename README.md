@@ -1,6 +1,6 @@
 # SimExtract
 
-----------------
+
 Simulation of extraction processes
 ------------------
 
@@ -9,8 +9,8 @@ Model for the extraction of volatile and semi-volatile compounds based on numeri
 A robust and general numerical model to simulate closed system extraction processes for analytical purposes based on one dimensional diffusion differential equations.
 
 Main developers:
-Pedro S. Peixoto - University of São Paulo (ppeixoto@usp.br)
-Luís Moreira Gonçalves - University of São Paulo (lmgoncalves@iq.usp.br)
+- Pedro S. Peixoto - University of São Paulo (ppeixoto@usp.br)
+- Luís Moreira Gonçalves - University of São Paulo (lmgoncalves@iq.usp.br)
 
 The software is freely provided without restriction for general purpose usage. Please cite the software as:
 - (TODO)
@@ -21,13 +21,16 @@ Suggestions for improvements can be mailed to developers and are more than welco
  Installation
 --------------
 
-**Use the code without installing it, via binder:**
+**Use the code without installing it, via binder:** 
+
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/pedrospeixoto/SimExtract/HEAD)
+
 
 - A generic example:
-https://mybinder.org/v2/gh/pedrospeixoto/mextractmodel/master?filepath=model.ipynb
+https://mybinder.org/v2/gh/pedrospeixoto/SimExtract/master?filepath=model.ipynb
 
 - Especific examples in the examples folder from here:
-https://mybinder.org/v2/gh/pedrospeixoto/mextractmodel/master
+https://mybinder.org/v2/gh/pedrospeixoto/SimExtract/master
 
 **Run locally on your computer:**
 
