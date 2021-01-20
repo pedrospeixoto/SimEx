@@ -23,9 +23,16 @@ Suggestions for improvements can be mailed to developers and are more than welco
 
 **Use the code without installing it, via binder:** 
 
-- A generic example: [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/pedrospeixoto/SimEx/HEAD?filepath=simex_example.ipynb)
+Main code folder: 
+- [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/pedrospeixoto/SimEx/HEAD)
 
-- Especific examples in the examples folder from here: [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/pedrospeixoto/SimEx/HEAD)
+
+Examples:
+- HeadSpace Solid-Phase Microextraction [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/pedrospeixoto/SimEx/HEAD?filepath=examples%2FHSSPME.ipynb)
+- Immersed Solid-Phase Microextraction [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/pedrospeixoto/SimEx/HEAD?filepath=examples%2FIMSPME.ipynb)
+- Gas Diffusion Micro Extraction [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/pedrospeixoto/SimEx/HEAD?filepath=examples%2FGDME.ipynb)
+- Membrane-Aided Gas-Diffusion [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/pedrospeixoto/SimEx/HEAD?filepath=examples%2FMAGD.ipynb)
+
 
 **Run locally on your computer:**
 
