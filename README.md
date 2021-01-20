@@ -6,7 +6,7 @@ Simulation of extraction processes
 
 Model for the extraction of volatile and semi-volatile compounds based on numerical simulations of diffusion processes. It shows some of the equilibria established along time. This model can be on-line simulated with the input of variables like diffusion coefficients, Henry constant, or the thickness of each phase, among others.
 
-A robust and general numerical model to simulate closed system extraction processes for analytical purposes based on one dimensional diffusion differential equations.
+It is based on a robust and general numerical model to simulate closed system extraction processes for analytical purposes based on one dimensional diffusion differential equations.
 
 Main developers:
 - Pedro S. Peixoto - University of São Paulo (ppeixoto@usp.br)
