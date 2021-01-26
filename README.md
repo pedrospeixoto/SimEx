@@ -1,4 +1,4 @@
-# SimExtract
+# SimEx
 
 
 Simulation of extraction processes
